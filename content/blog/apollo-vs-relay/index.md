@@ -35,7 +35,7 @@ Let’s dive in!
 
 Here’s the wrapper of our two apps-within-the-app:
 
-```language-jsx
+```jsx
 const App = () => {
   return (
     <Router>
@@ -59,7 +59,7 @@ Each of our mini-apps renders two components: a QueryComponent to fetch the cont
 
 Here’s what Main looks like. Both apps are almost identical, the exception being that Relay needs the viewer prop for the MutationComponent (more on that later):
 
-```language-jsx
+```jsx
 const Main = () => {
   return (
     <div className="Main">
@@ -93,7 +93,7 @@ Let’s get to the good stuff: our QueryComponent.
 
 ### QueryComponent: Relay
 
-```language-jsx
+```jsx
 import React from 'react';
 import { QueryRenderer } from 'react-relay';
 import environment from './environment';
@@ -127,7 +127,7 @@ Depending on whether there is an error or no data yet, we display a message to t
 
 ### QueryComponent: Apollo
 
-```language-jsx
+```jsx
 import React from 'react';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider, Query } from 'react-apollo';
@@ -165,7 +165,7 @@ After that, same approach as Relay: if loading or error, tell the user. Otherwis
 
 ### The Query: Relay
 
-```language-jsx
+```jsx
 import graphql from 'babel-plugin-relay/macro';
 
 export const GET_CONTACTS = graphql`
@@ -204,7 +204,7 @@ Note that in order to make allContacts a connection (which was, in turn, necessa
 
 In comparison, the Apollo query is rather unexciting:
 
-```language-jsx
+```jsx
 import gql from 'graphql-tag';
 
 export const GET_CONTACTS = gql`
@@ -228,7 +228,7 @@ I could name this query query PoopPoop and Apollo wouldn’t care.
 
 ### MutationComponent: Relay
 
-```language-jsx
+```jsx
 import React from 'react';
 import Form from '../components/Form';
 import { commitMutation } from 'react-relay';
@@ -288,7 +288,7 @@ Nothing too crazy here, though note that I had to import our environment again t
 
 ### MutationComponent: Apollo
 
-```language-jsx
+```jsx
 import React from 'react';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
@@ -342,7 +342,7 @@ After our mutation succeeds, we need to update our contact list to include the n
 
 (Both Relay and Apollo support optimistic updating, but I chose not to include it for simplicity’s sake.)
 
-```language-jsx
+```jsx
 
 import { ConnectionHandler } from 'relay-runtime';
 
@@ -365,7 +365,7 @@ In Relay, updating the contact list consists of finding the new contact in the d
 
 ### Updating Local Store: Apollo
 
-```language-jsx
+```jsx
 import { GET_CONTACTS } from './query';
 
 const updateLocalStore = (cache, { data: { createContact } }) => {
