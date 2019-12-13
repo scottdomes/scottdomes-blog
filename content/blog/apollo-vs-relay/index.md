@@ -1,0 +1,441 @@
+---
+title: Apollo and Relay Side by Side
+date: "2019-01-29T22:40:32.169Z"
+description: Decide which GraphQL library is right for you
+
+---
+
+![Photo by [rawpixel](https://unsplash.com/photos/3Zt0qoHUYb0?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/search/photos/competition?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)](./banner.jpeg)*Photo by [rawpixel](https://unsplash.com/photos/3Zt0qoHUYb0?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/search/photos/competition?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)*
+
+## Introduction
+
+So you’re decided to try GraphQL in React.
+
+You’ve read the articles extolling how [it is the future](https://blog.apollographql.com/why-graphql-is-the-future-3bec28193807). You’ve seen its usage spread to [major tech players](https://graphql.org/users/). And the developers you know won’t shut up about it.
+
+Now what?
+
+Well, the two major libraries for adding GraphQL to your React app are [Relay](https://facebook.github.io/relay/) and [Apollo](https://www.apollographql.com/). Both are mature solutions, and plenty of people will swear by one or the other.
+
+But which one is right for you?
+
+I can’t answer that question for you. What I can do is show you what each looks like—by solving the same problem with both.
+
+## Our Example App
+
+The idea is simple: I built the exact same app using both Apollo and Relay, with the same basic structure to the components.
+
+The app is a barebones contact list. You can create a contact, and view a list of created contacts. That’s it.
+
+This app lets us see both an example of a query (for a collection of edges) and a mutation (to create a new edge).
+
+Let’s dive in!
+
+### The Root Component
+
+Here’s the wrapper of our two apps-within-the-app:
+
+```language-jsx
+const App = () => {
+  return (
+    <Router>
+      <React.Fragment>
+        <Route path="/apollo" component={ApolloMain} />
+        <Route path="/relay" component={RelayMain} />
+      </React.Fragment>
+    </Router>
+  );
+};
+
+export default App;
+```
+
+Each mini-app is completely self-contained within its respective Route.
+> Unsure about React.Fragment? It’s a way to wrap multiple child elements without introducing an extra div. [Read more here](https://reactjs.org/docs/fragments.html).
+
+### The Main Component
+
+Each of our mini-apps renders two components: a QueryComponent to fetch the contacts, and a MutationComponent which allows the creation of a new contact.
+
+Here’s what Main looks like. Both apps are almost identical, the exception being that Relay needs the viewer prop for the MutationComponent (more on that later):
+
+```language-jsx
+const Main = () => {
+  return (
+    <div className="Main">
+      <Link to="/apollo" className="switch">
+        Switch to Apollo
+      </Link>
+      <div className="container">
+        <QueryComponent>
+          {data => {
+            return (
+              <React.Fragment>
+                <ContactList edges={data.viewer.allContacts.edges} />
+                <MutationComponent viewer={data.viewer} />
+              </React.Fragment>
+            );
+          }}
+        </QueryComponent>
+      </div>
+    </div>
+  );
+};
+
+export default Main;
+```
+
+We render a link to switch between the two apps. Then, we render a QueryComponent which gives us the data. We pass that data down to the ContactList, and also render the MutationComponent, which wraps our form.
+
+I’ll be skipping over shared components like Form and ContactList. They’re standard React goodness. You can see them as part of the [source code](https://github.com/scottdomes/apollo-relay-comparison).
+
+Let’s get to the good stuff: our QueryComponent.
+
+### QueryComponent: Relay
+
+```language-jsx
+import React from 'react';
+import { QueryRenderer } from 'react-relay';
+import environment from './environment';
+import { GET_CONTACTS } from './query';
+
+const QueryComponent = ({ children }) => {
+  return (
+    <QueryRenderer
+      environment={environment}
+      query={GET_CONTACTS}
+      render={({ error, props }) => {
+        if (error) {
+          return <div>Error!</div>;
+        }
+        if (!props) {
+          return <div>Loading...</div>;
+        }
+
+        return children(props);
+      }}
+    />
+  );
+};
+
+export default QueryComponent;
+```
+
+We use the Relay-provided QueryRenderer, passing it our query as a prop. We also pass it the environment, which is a simple setup file [you can see here](https://github.com/scottdomes/apollo-relay-comparison/blob/master/src/relay/environment.js).
+
+Depending on whether there is an error or no data yet, we display a message to the user. If all goes well, we pass the data down to the children.
+
+### QueryComponent: Apollo
+
+```language-jsx
+import React from 'react';
+import ApolloClient from 'apollo-boost';
+import { ApolloProvider, Query } from 'react-apollo';
+import { GET_CONTACTS } from './query';
+
+const client = new ApolloClient({
+  uri: 'http://localhost:8080/graphql'
+});
+
+const QueryComponent = ({ children }) => {
+  return (
+    <ApolloProvider client={client}>
+      <Query query={GET_CONTACTS}>
+        {({ data, loading, error }) => {
+          if (error) {
+            return <div>Error!</div>;
+          }
+          if (loading) {
+            return <div>Loading...</div>;
+          }
+
+          return children(data);
+        }}
+      </Query>
+    </ApolloProvider>
+  );
+};
+
+export default QueryComponent;
+```
+
+Instead of an environment, Apollo asks that we create an ApolloClient and pass that to an ApolloProvider. This provider puts the Apollo configuration into [context](https://reactjs.org/docs/context.html), making it available to all Query and Mutation components down the component tree.
+
+After that, same approach as Relay: if loading or error, tell the user. Otherwise, render the children with the data.
+
+### The Query: Relay
+
+```language-jsx
+import graphql from 'babel-plugin-relay/macro';
+
+export const GET_CONTACTS = graphql`
+  query queryQuery {
+    viewer {
+      id
+      allContacts(first: 1000) @connection(key: "Main_allContacts") {
+        edges {
+          node {
+            id
+            name
+            email
+          }
+        }
+      }
+    }
+  }
+`;
+```
+
+The first thing you may notice is the fourth line, query queryQuery. Let’s talk about that.
+
+This fragment is stored in a file called query.js. Relay is rather opinionated, and insists that queries are named [Module/]Query. Doing otherwise throws an error.
+
+The approach Relay is encouraging is to keep your queries in the same file as your component. If I were to move this query to the ContactList, for example, I’d have to name it ContactListQuery, which does make sense.
+
+I left this as query queryQuery because it’s fun, but also to highlight how Relay’s rules may conflict with your app’s unique organization.
+
+Beyond that, we use the @connection tag to instantiate the contacts as a Relay connection. That will be important later.
+
+(Curious about connections? [Read more](https://blog.apollographql.com/explaining-graphql-connections-c48b7c3d6976).)
+
+Note that in order to make allContacts a connection (which was, in turn, necessary to mutate it later) I *had* to introduce the first argument, even if I want all the contacts. Again, Relay is opinionated.
+
+### The Query Apollo
+
+In comparison, the Apollo query is rather unexciting:
+
+```language-jsx
+import gql from 'graphql-tag';
+
+export const GET_CONTACTS = gql`
+  query contacts {
+    viewer {
+      allContacts {
+        edges {
+          node {
+            name
+            email
+            id
+          }
+        }
+      }
+    }
+  }
+`;
+```
+
+I could name this query query PoopPoop and Apollo wouldn’t care.
+
+### MutationComponent: Relay
+
+```language-jsx
+import React from 'react';
+import Form from '../components/Form';
+import { commitMutation } from 'react-relay';
+import graphql from 'babel-plugin-relay/macro';
+import environment from './environment';
+import updateLocalStore from './updateLocalStore';
+
+const mutation = graphql`
+  mutation MutationComponentMutation($input: ContactInput!) {
+    createContact(input: $input) {
+      contactEdge {
+        node {
+          id
+          email
+          name
+        }
+      }
+    }
+  }
+`;
+
+function commit(name, email, viewer) {
+  return commitMutation(environment, {
+    mutation,
+    variables: {
+      input: {
+        name,
+        email
+      }
+    },
+    updater: (store, data) => updateLocalStore(store, data, viewer)
+  });
+}
+
+const MutationComponent = ({ viewer }) => {
+  return (
+    <Form
+      onSubmit={(name, email) => {
+        commit(name, email, viewer);
+      }}
+    />
+  );
+};
+
+export default MutationComponent;
+```
+
+This is a big snippet, so let’s break it down.
+
+1. At the top we have our mutation defined. Again, I had to call it MutationComponentMutation, because that’s the name of the file.
+
+1. We have our MutationComponent, which renders the Form. On submit, we call a function called commit, which performs the mutation.
+
+1. commit calls a Relay-provided function called commitMutation, which sends the request to the backend, and then calls the updater function to update our local store (to add in the new contact).
+
+Nothing too crazy here, though note that I had to import our environment again to pass to commitMutation.
+
+### MutationComponent: Apollo
+
+```language-jsx
+import React from 'react';
+import gql from 'graphql-tag';
+import { Mutation } from 'react-apollo';
+import Form from '../components/Form';
+import updateLocalStore from './updateLocalStore';
+
+const CREATE_CONTACT = gql`
+  mutation createContact($input: ContactInput!) {
+    createContact(input: $input) {
+      contactEdge {
+        __typename
+        node {
+          id
+          email
+          name
+        }
+      }
+    }
+  }
+`;
+
+const MutationComponent = () => {
+  return (
+    <Mutation mutation={CREATE_CONTACT} update={updateLocalStore}>
+      {(create, { data }) => (
+        <Form
+          onSubmit={(name, email) => {
+            create({
+              variables: {
+                input: {
+                  name,
+                  email
+                }
+              }
+            });
+          }}
+        />
+      )}
+    </Mutation>
+  );
+};
+
+export default MutationComponent;
+```
+
+Again, we have our mutation defined at the top. We pass that to the Mutation component, and also pass it an update prop to update the local store on success.
+
+### Updating Local Store: Relay
+
+After our mutation succeeds, we need to update our contact list to include the new contact.
+
+(Both Relay and Apollo support optimistic updating, but I chose not to include it for simplicity’s sake.)
+
+```language-jsx
+
+import { ConnectionHandler } from 'relay-runtime';
+
+const sharedUpdater = (store, viewer, newEdge) => {
+  const viewerProxy = store.get(viewer.id);
+  const conn = ConnectionHandler.getConnection(viewerProxy, 'Main_allContacts');
+  ConnectionHandler.insertEdgeAfter(conn, newEdge);
+};
+
+const updateLocalStore = (store, data, viewer) => {
+  const payload = store.getRootField('createContact');
+  const newEdge = payload.getLinkedRecord('contactEdge');
+  sharedUpdater(store, viewer, newEdge);
+};
+
+export default updateLocalStore;
+```
+
+In Relay, updating the contact list consists of finding the new contact in the data returned from the request, and then using the ConnectionHandler to merge it into our allContacts connection.
+
+### Updating Local Store: Apollo
+
+```language-jsx
+import { GET_CONTACTS } from './query';
+
+const updateLocalStore = (cache, { data: { createContact } }) => {
+  const oldContacts = cache.readQuery({
+    query: GET_CONTACTS
+  }).viewer.allContacts.edges;
+  cache.writeQuery({
+    query: GET_CONTACTS,
+    data: {
+      viewer: {
+        __typename: 'Viewer',
+        allContacts: {
+          __typename: 'ContactConnection',
+          edges: oldContacts.concat([createContact.contactEdge])
+        }
+      }
+    }
+  });
+};
+
+export default updateLocalStore;
+```
+
+Here, the process is a little different. We execute our GET_CONTACTS query against the local store, and then merge the old and new data.
+
+Note that updating deeply nested data is a bit tricky, both in reading and writing. Searching for data.viewer.allContacts.edges is dangerous if any of that data had previously returned null.
+
+### Other Notes
+
+Since I was more familiar with Apollo prior to this tutorial, I started there first, getting the Apollo version up and running.
+
+In retrospect, this decision wasn’t great. Relay made several demands as to how I structure my queries, and insisted that I create a schema.graphql ([view here](https://github.com/scottdomes/apollo-relay-comparison/blob/master/src/relay/schema.graphql)) on the frontend to match my schema on the backend.
+
+Any deviation from the recommended approach causes an error in the Relay compiler (which you should run constantly while developing).
+
+Relay also treated pagination as a first-class priority when dealing with connections, which was overkill for my tiny app.
+
+## Conclusion
+
+You can view [the final source code here](https://github.com/scottdomes/apollo-relay-comparison). Below, I’ve summarized some of my thoughts about the two libraries.
+
+### Structure vs Freedom
+
+The striking difference between Relay and Apollo is that Relay is structured and opinionated, while Apollo is flexible and easygoing.
+
+Neither is necessarily better. Opinionated libraries enforce higher standards, and define a clear approach. If you have a large team with members at different skill levels, Relay’s rigour will ensure your components handle queries the same way across the board.
+
+If you seek flexibility in how you integrate GraphQL, especially if you’re introducing it to an existing app, Apollo will give you an easier time. You can put your queries where you like, name them what you like, and organize your components as suits your whims.
+
+However, Apollo also insists on a more declarative approach to queries. You can think of this as the difference between calling client.getQuery and having to render to a Query component to fetch data. Apollo does have limited support for the former, but in my experience the latter is heavily favoured. That’s a big negative if you don’t like pure logic components, or if you need to do query manipulation outside of your components themselves.
+
+### Documentation
+
+I found the Relay documentation to be opaque, incomplete, and downright confusing at times. The docs were often missing the *why* behind certain decisions; instead, you had to follow along and figure it out yourself.
+
+Apollo’s documentation isn’t perfect, but it is much more thorough and beginner-friendly.
+
+### Community
+
+Anecdotally speaking, I had a much easier time finding support for Apollo. StackOverflow answers aren’t a perfect metric, but most of my Googling about Relay led to paltry results.
+
+Not a deal breaker, but looking for help with Relay was frustrating at best.
+
+This frustration may be a result of Relay’s nature. It was an internal Facebook tool that they decided to open source. It still very much feels that way; it’s trying to solve Facebook’s problems, in a way that Facebook likes.
+
+If your app aligns with their approach, awesome. Relay will be a great tool. But if you want to diverge, Relay will fight you every step of the way.
+
+### Wrapping Up
+
+In short, both libraries got the job done. My formal recommendation would be Apollo due to its flexibility. Do keep in mind, however, its downsides, especially its declarative approach.
+
+Thanks for reading! Let me know in the comments which approach you prefer, and what has worked for you.
+
