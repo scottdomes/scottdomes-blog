@@ -38,11 +38,10 @@ function Bio() {
               }}
             />
             <p>
-              Written by <strong>{author}</strong> who lives and works in San
-              Francisco building useful things.
+              Hi, I'm <strong>{author}</strong>. I'm a software developer/teacher who mostly writes about React and JavaScript.
               {` `}
               <a href={`https://twitter.com/${social.twitter}`}>
-                You should follow him on Twitter
+                Follow me on Twitter.
               </a>
             </p>
           </div>
