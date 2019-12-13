@@ -1,10 +1,8 @@
 ---
-title: Hello World
-date: "2015-05-01T22:12:03.284Z"
+title: How to write great React
+date: "2019-08-19T22:12:03.284Z"
+description: Five points to remember
 ---
-
-# How to write great React
-## Five points to remember
 
 ![](./banner.png)
 
