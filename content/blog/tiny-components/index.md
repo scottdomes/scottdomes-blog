@@ -14,15 +14,8 @@ But while component brevity tends to be the case, there’s no hard and fast rul
 
 …but you shouldn’t. In fact, *most* of your components are probably too big—or rather, doing too much.
 
-In this article, I’ll make the case that most components (even the regular 200 line ones) should be much more focused. They should do only one thing, and do it well. Here is how [Addy Osmani](undefined) describes it beautifully:
-[**Title Components Should Be Focused, Independent, Reusable, Small And Testable (FIRST)**
-*Whether it's a client or server-side component, a Node module or a piece of visual UI, components that are large are…*addyosmani.com](https://addyosmani.com/first/)
-
-**Tip:** Use [**Bit](https://github.com/teambit/bit)** to share and discover your components. When you organize and reuse them you can build new apps faster as a team. Give it a try.
-
-![React components with Bit: discover, play, install](https://cdn-images-1.medium.com/max/2726/1*pqRT9FOXRyCYMWB3WSUEjg.png)*React components with Bit: discover, play, install*
-[**Component Discovery and Collaboration · Bit**
-*Bit is where developers share components and collaborate to build amazing software together. Discover components shared…*bit.dev](https://bit.dev/)
+In this article, I’ll make the case that most components (even the regular 200 line ones) should be much more focused. They should do only one thing, and do it well. Here is how Addy Osmani describes it beautifully:
+[**Title Components Should Be Focused, Independent, Reusable, Small And Testable (FIRST)**](https://addyosmani.com/first/)
 
 Let’s start with an example of how component creation can **go wrong**.
 

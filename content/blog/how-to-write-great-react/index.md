@@ -89,9 +89,7 @@ With React components, the rules are a bit different, since JSX tends to take up
 
 ### Your component should do one thing
 
-I wrote extensively on this subject in my article[ \*Tiny Components: What could go wrong?](https://blog.bitsrc.io/tiny-components-what-can-go-wrong-d6aa42d71370).*
-[**Tiny Components: What Can Go Wrong?**
-*Using the Single Responsibility Principle to build better apps*](https://blog.bitsrc.io/tiny-components-what-can-go-wrong-d6aa42d71370)
+I wrote extensively on this subject in my article[Tiny Components in React](/tiny-components).
 
 In short, your components should have only one main responsibility: **one reason to change**.
 

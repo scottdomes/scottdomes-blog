@@ -272,10 +272,4 @@ In this case, use a service object. That code probably doesn’t logically fit i
 
 A specific business action that does one thing. That’s our goal with service objects. If you can meet that definition, they can be a great way to separate logic into testable & digestible pieces.
 
-## Further reading
-[**The 3 Tenets of Service Objects in Ruby on Rails**
-*Service Objects are becoming a staple in the toolbelt to slim down both Controllers and Models. Welcome to the world of…*hackernoon.com](https://hackernoon.com/the-3-tenets-of-service-objects-c936b891b3c2)
-[**Anatomy of a Rails Service Object | Stitch Fix Technology - Multithreaded**
-*We've given up on "fat models, skinny controllers" as a design style for our Rails apps-in fact we abandoned it before…*multithreaded.stitchfix.com](https://multithreaded.stitchfix.com/blog/2015/06/02/anatomy-of-service-objects-in-rails/)
-
 Thanks for reading!

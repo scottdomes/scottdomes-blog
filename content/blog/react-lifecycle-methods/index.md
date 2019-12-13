@@ -13,8 +13,6 @@ Since [my first article](https://engineering.musefind.com/react-lifecycle-method
 Since the lifecycle API is a bit more complex this time around, I’ve split the methods into four sections: mounting, updating, unmounting, and errors.
 
 If you’re not super comfortable with React, [my article](https://medium.freecodecamp.org/everything-you-need-to-know-about-react-eaedf53238c4) here provides a thorough intro.
-[**Everything You Should Know About React: The Basics You Need to Start Building**
-*Are you curious about React and haven’t had the chance to learn it? Or maybe you’ve tried tutorials in the past, but…*medium.freecodecamp.org](https://medium.freecodecamp.org/everything-you-need-to-know-about-react-eaedf53238c4)
 
 ## The Problem
 
@@ -23,8 +21,6 @@ Our example app for this tutorial is going to simple: a grid of blocks, each wit
 Every couple of seconds, a new bunch of blocks load at the bottom of the page, and need to be arranged.
 
 You can view the final app [here](https://blissful-ptolemy-8b66a6.netlify.com/), and its code [here](https://github.com/scottdomes/react-lifecycle-example).
-[**scottdomes/react-lifecycle-example**
-*Contribute to scottdomes/react-lifecycle-example development by creating an account on GitHub.*github.com](https://github.com/scottdomes/react-lifecycle-example)
 
 Not a complex idea, but here’s the wrinkle: we’re going to be using the [bricks.js library](http://callmecavs.com/bricks.js/) to align our grid.
 
@@ -45,7 +41,6 @@ Lifecycle methods (with the exception of constructor) are hard to reason about. 
 That said, let’s check them out.
 
 ## Mounting
-
 ### constructor
 
 The first thing that gets called is your component constructor, *if* your component is a class component. This does not apply to functional components.
@@ -112,9 +107,7 @@ class Grid extends Component {
 
 We need the constructor to call createRef, to create a reference to the grid element, so we can pass it to bricks.js.
 
-You can also use the constructor for function binding, which is also optional. See [here](https://medium.freecodecamp.org/react-binding-patterns-5-approaches-for-handling-this-92c651b5af56) for more:
-[**React Binding Patterns: 5 Approaches for Handling `this`**
-*JavaScript’s this keyword behavior has confused developers for ages.*medium.freecodecamp.org](https://medium.freecodecamp.org/react-binding-patterns-5-approaches-for-handling-this-92c651b5af56)
+You can also use the constructor for function binding, which is also optional. See [here](https://medium.freecodecamp.org/react-binding-patterns-5-approaches-for-handling-this-92c651b5af56) for more.
 
 **Most Common Use Case For Constructor:** Setting up state, creating refs and method binding.
 
@@ -145,7 +138,7 @@ Note that we could have placed this code in the constructor. The advantage of ge
 
 Rendering does all the work. It returns the JSX of your actual component. When working with React, you’ll spend most of your time here.
 
-**Most Common Use Case For Render: **Returning component JSX**.**
+**Most Common Use Case For Render:** Returning component JSX.
 
 ### componentDidMount
 
@@ -159,9 +152,7 @@ You can read more of his answer [here](https://tylermcginnis.com/react-interview
 componentDidMount is also where you can do all the fun things you couldn’t do when there was no component to play with. Here are some examples:
 
 * draw on a <canvas> element that you just rendered
-
 * initialize a [masonry](http://masonry.desandro.com/) grid layout from a collection of elements (that’s us!)
-
 * add event listeners
 
 Basically, here you want to do all the setup you couldn’t do without a DOM, and start getting all the data you need.
@@ -236,8 +227,7 @@ shouldComponentUpdate should always return a boolean — an answer to the questi
 But if you’re worried about wasted renders and other nonsense — shouldComponentUpdate is an awesome place to improve performance.
 
 I wrote an article on using shouldComponentUpdate in this way — check it out:
-[**How to Benchmark React Components: The Quick and Dirty Guide**
-*A React Component works hard. As the user manipulates the state of the application, it may re-render 5, 10, 100 times…*engineering.musefind.com](https://engineering.musefind.com/how-to-benchmark-react-components-the-quick-and-dirty-guide-f595baf1014c)
+[**How to Benchmark React Components: The Quick and Dirty Guide**](https://engineering.musefind.com/how-to-benchmark-react-components-the-quick-and-dirty-guide-f595baf1014c)
 
 In the article, we talk about having a table with many many fields. The problem was that when the table re-rendered, each field would also re-render, slowing things down.
 
@@ -416,7 +406,5 @@ class ErrorBoundary extends Component {
 That’s it! Those are all the lifecycle methods are your disposal.
 
 You can check the example app code [here](https://github.com/scottdomes/react-lifecycle-example) and the final product [here](https://blissful-ptolemy-8b66a6.netlify.com/).
-[**scottdomes/react-lifecycle-example**
-*Contribute to scottdomes/react-lifecycle-example development by creating an account on GitHub.*github.com](https://github.com/scottdomes/react-lifecycle-example)
 
 Thanks for reading!
