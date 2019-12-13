@@ -29,30 +29,31 @@ Let’s start with an example of how component creation can **go wrong**.
 ### Our App
 
 Imagine you have a standard social media-esque app, with a main screen:
-```
-    class Main extends React.Component {
-      render() {
-        return (
-          <div>
-            <header>
-              // Header JSX
-            </header>
-            <aside id="header">
-              // Sidebar JSX
-            </aside>
-            <div id="post-container">
-              {this.state.posts.map(post => {
-                return (
-                  <div className="post">
-                    // Post JSX
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      }
-    }
+
+```jsx
+class Main extends React.Component {
+  render() {
+    return (
+      <div>
+        <header>
+          // Header JSX
+        </header>
+        <aside id="header">
+          // Sidebar JSX
+        </aside>
+        <div id="post-container">
+          {this.state.posts.map(post => {
+            return (
+              <div className="post">
+                // Post JSX
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+}
 ```
 *(This example, like many more to come, should be considered pseudo-code.)*
 
@@ -60,49 +61,49 @@ It displays a header, a sidebar, and a list of posts. Simple.
 
 Since we also need to load the posts, we can do so when the component mounts:
 
-```
-    class Main extends React.Component {
-      state = { posts: [] };
+```jsx
+class Main extends React.Component {
+  state = { posts: [] };
 
-      componentDidMount() {
-        this.loadPosts();
-      }
+  componentDidMount() {
+    this.loadPosts();
+  }
 
-      loadPosts() {
-        // Load posts and save to state
-      }
+  loadPosts() {
+    // Load posts and save to state
+  }
 
-      render() {
-        // Render code
-      }
-    }
+  render() {
+    // Render code
+  }
+}
 ```
 
 We also have some logic for triggering the sidebar. If the user clicks a button in the header, the sidebar slides in. They can either close it from the header again, or from the sidebar itself.
 
-```
-    class Main extends React.Component {
-      state = { posts: [], isSidebarOpen: false };
+```jsx
+class Main extends React.Component {
+  state = { posts: [], isSidebarOpen: false };
 
-      componentDidMount() {
-        this.loadPosts();
-      }
+  componentDidMount() {
+    this.loadPosts();
+  }
 
-      loadPosts() {
-        // Load posts and save to state
-      }
+  loadPosts() {
+    // Load posts and save to state
+  }
 
-      handleOpenSidebar() {
-        // Open sidebar by changing state
-      }
-      handleCloseSidebar() {
-        // Close sidebar by changing state
-      }
+  handleOpenSidebar() {
+    // Open sidebar by changing state
+  }
+  handleCloseSidebar() {
+    // Close sidebar by changing state
+  }
 
-      render() {
-        // Render code
-      }
-    }
+  render() {
+    // Render code
+  }
+}
 ```
 
 Our component is now a bit more complex, but is still easy to understand.
@@ -128,130 +129,130 @@ Let’s say that a month after we first implemented the Main component, a develo
 
 Easy enough to add!
 
-```
-    class Main extends React.Component {
-      state = { posts: [], isSidebarOpen: false, postsToHide: [] };
+```jsx
+class Main extends React.Component {
+  state = { posts: [], isSidebarOpen: false, postsToHide: [] };
 
-      // older methods
+  // older methods
 
-      get filteredPosts() {
-        // Return posts in state, without the postsToHide
-      }
+  get filteredPosts() {
+    // Return posts in state, without the postsToHide
+  }
 
-      render() {
-        return (
-          <div>
-            <header>
-              // Header JSX
-            </header>
-            <aside id="header">
-              // Sidebar JSX
-            </aside>
-            <div id="post-container">
-              {this.filteredPosts.map(post => {
-                return (
-                  <div className="post">
-                    // Post JSX
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      }
-    }
+  render() {
+    return (
+      <div>
+        <header>
+          // Header JSX
+        </header>
+        <aside id="header">
+          // Sidebar JSX
+        </aside>
+        <div id="post-container">
+          {this.filteredPosts.map(post => {
+            return (
+              <div className="post">
+                // Post JSX
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+}
 ```
 
 Our teammate did this in a clean way. She only added a single new method, plus one new state property. No one viewing the summary of her changes has much reason to object.
 
 A couple of weeks later, another new feature is announced—a streamlined sidebar for mobile. Rather than mess around with a CSS implementation, the developer decides to make some new JSX that can only be triggered on mobile.
 
-```
-    class Main extends React.Component {
-      state = {
-        posts: [],
-        isSidebarOpen: false,
-        postsToHide: [],
-        isMobileSidebarOpen: false
-      };
+```jsx
+class Main extends React.Component {
+  state = {
+    posts: [],
+    isSidebarOpen: false,
+    postsToHide: [],
+    isMobileSidebarOpen: false
+  };
 
-      // older methods
+  // older methods
 
-      handleOpenSidebar() {
-        if (this.isMobile()) {
-          this.openMobileSidebar();
-        } else {
-          this.openSidebar();
-        }
-      }
-
-      openSidebar() {
-        // Open regular sidebar
-      }
-
-      openMobileSidebar() {
-        // Open mobile sidebar
-      }
-
-      isMobile() {
-        // Check if mobile device
-      }
-
-      render() {
-        // Render method
-      }
+  handleOpenSidebar() {
+    if (this.isMobile()) {
+      this.openMobileSidebar();
+    } else {
+      this.openSidebar();
     }
+  }
+
+  openSidebar() {
+    // Open regular sidebar
+  }
+
+  openMobileSidebar() {
+    // Open mobile sidebar
+  }
+
+  isMobile() {
+    // Check if mobile device
+  }
+
+  render() {
+    // Render method
+  }
+}
 ```
 
 Another clean implementation. A couple of new, well-named methods, and a new state property.
 
 But we’re starting to have a problem. Main still only “does” one thing (render the main screen), but look at all the methods we now have to deal with:
 
-```
-    class Main extends React.Component {
-      state = {
-        posts: [],
-        isSidebarOpen: false,
-        postsToHide: [],
-        isMobileSidebarOpen: false
-      };
+```jsx
+class Main extends React.Component {
+  state = {
+    posts: [],
+    isSidebarOpen: false,
+    postsToHide: [],
+    isMobileSidebarOpen: false
+  };
 
-      componentDidMount() {
-        this.loadPosts();
-      }
+  componentDidMount() {
+    this.loadPosts();
+  }
 
-      loadPosts() {
-        // Load posts and save to state
-      }
+  loadPosts() {
+    // Load posts and save to state
+  }
 
-      handleOpenSidebar() {
-        // Check if mobile then open relevant sidebar
-      }
+  handleOpenSidebar() {
+    // Check if mobile then open relevant sidebar
+  }
 
-      handleCloseSidebar() {
-        // Close both sidebars
-      }
+  handleCloseSidebar() {
+    // Close both sidebars
+  }
 
-      openSidebar() {
-        // Open regular sidebar
-      }
+  openSidebar() {
+    // Open regular sidebar
+  }
 
-      openMobileSidebar() {
-        // Open mobile sidebar
-      }
+  openMobileSidebar() {
+    // Open mobile sidebar
+  }
 
-      isMobile() {
-        // Check if mobile device
-      }
+  isMobile() {
+    // Check if mobile device
+  }
 
-      get filteredPosts() {
-        // Return posts in state, without the postsToHide
-      }
+  get filteredPosts() {
+    // Return posts in state, without the postsToHide
+  }
 
-      render() {
-        // Render method
-      }
-    }
+  render() {
+    // Render method
+  }
+}
 ```
 
 Our component is becoming big and bulky and hard to follow. It’s only going to get worse over time, as more functionality is added.
@@ -274,16 +275,16 @@ The solution is simple: divide Main into smaller components. But how do we divvy
 
 Let’s start at the top. We’ll keep our Main’s responsibility as “rendering the main view.” But we’ll slim it down to literally just render the relevant components:
 
-```
-    class Main extends React.Component {
-      render() {
-        return (
-          <Layout>
-            <PostList />
-          </Layout>
-        );
-      }
-    }
+```jsx
+class Main extends React.Component {
+  render() {
+    return (
+      <Layout>
+        <PostList />
+      </Layout>
+    );
+  }
+}
 ```
 
 Ah. Lovely.
@@ -292,21 +293,21 @@ If we ever change the way our main view is rendered—e.g. adding additional sec
 
 Let’s dive down into Layout:
 
-```
-    class Layout extends React.Component {
-      render() {
-        return (
-          <SidebarDisplay>
-            {(isSidebarOpen, toggleSidebar) => (
-              <div>
-                <Header openSidebar={toggleSidebar} />
-                <Sidebar isOpen={isSidebarOpen} close={toggleSidebar} />
-              </div>
-            )}
-          </SidebarDisplay>
-        );
-      }
-    }
+```jsx
+class Layout extends React.Component {
+  render() {
+    return (
+      <SidebarDisplay>
+        {(isSidebarOpen, toggleSidebar) => (
+          <div>
+            <Header openSidebar={toggleSidebar} />
+            <Sidebar isOpen={isSidebarOpen} close={toggleSidebar} />
+          </div>
+        )}
+      </SidebarDisplay>
+    );
+  }
+}
 ```
 
 This is a bit more complex. Layout is solely responsible for rendering the layout components (sidebar/header). We resist the temptation to make it responsible for determining whether the sidebar is open.
@@ -317,48 +318,48 @@ Instead, we extract that to a SidebarDisplay component, which passes down the ne
 
 Then, Sidebar itself can be quite simple, just focusing on rendering the right sidebar:
 
-```
-    class Sidebar extends React.Component {
-      isMobile() {
-        // Check if mobile
-      }
+```jsx
+class Sidebar extends React.Component {
+  isMobile() {
+    // Check if mobile
+  }
 
-      render() {
-        if (this.isMobile()) {
-          return <MobileSidebar />;
-        } else {
-          return <DesktopSidebar />;
-        }
-      }
+  render() {
+    if (this.isMobile()) {
+      return <MobileSidebar />;
+    } else {
+      return <DesktopSidebar />;
     }
+  }
+}
 ```
 
 Again, we resist the temptation to put the desktop/mobile JSX straight into this component, since that would give this component two reasons to change.
 
 One more component to look at:
 
-```
-    class PostList extends React.Component {
-      state = { postsToHide: [] }
+```jsx
+class PostList extends React.Component {
+  state = { postsToHide: [] }
 
-      filterPosts(posts) {
-        // Show posts, minus hidden ones
-      }
+  filterPosts(posts) {
+    // Show posts, minus hidden ones
+  }
 
-      hidePost(post) {
-        // Save hidden post to state
-      }
+  hidePost(post) {
+    // Save hidden post to state
+  }
 
-      render() {
-        return (
-          <PostLoader>
-            {
-              posts => this.filterPosts(posts).map(post => <Post />)
-            }
-          </PostLoader>
-        )
-      }
-    }
+  render() {
+    return (
+      <PostLoader>
+        {
+          posts => this.filterPosts(posts).map(post => <Post />)
+        }
+      </PostLoader>
+    )
+  }
+}
 ```
 
 PostList only changes if we change how we render the list of posts. Sounds pretty obvious, eh? That’s what we’re aiming for.

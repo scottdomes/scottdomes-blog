@@ -9,25 +9,25 @@ description: The path to slimmer controllers and models
 Imagine you have a controller with some complex business logic.
 
 ```ruby
-    class UserController < ApplicationController
-      def create
-        user = User.new(user_params)
-        if user.save
-          send_welcome_email
-          notify_slack
-          if @user.admin?
-            log_new_admin
-          else
-            log_new_user
-          end
-          redirect_to new_user_welcome_path
-        else
-          render 'new'
-        end
+class UserController < ApplicationController
+  def create
+    user = User.new(user_params)
+    if user.save
+      send_welcome_email
+      notify_slack
+      if @user.admin?
+        log_new_admin
+      else
+        log_new_user
       end
-
-      # private methods
+      redirect_to new_user_welcome_path
+    else
+      render 'new'
     end
+  end
+
+  # private methods
+end
 ```
 
 This code isn’t unreadable, but there’s a lot going on. The controller has too much to deal with—it needs private methods to cover everything from sending a welcome email to notifying slack to logging whether it’s an admin or user.
@@ -47,25 +47,25 @@ They encapsulate a set of business logic, moving it out of models and controller
 Here’s what a RegisterUser service object might look like:
 
 ```ruby
-    class RegisterUser
-      def initialize(user)
-        [@user](http://twitter.com/user) = user
-      end
+class RegisterUser
+  def initialize(user)
+    [@user](http://twitter.com/user) = user
+  end
 
-      def execute
-        return nil unless [@user](http://twitter.com/user).save
-        send_welcome_email
-        notify_slack
-        if @user.admin?
-          log_new_admin
-        else
-          log_new_user
-        end
-        [@user](http://twitter.com/user)
-      end
-
-      # private methods
+  def execute
+    return nil unless [@user](http://twitter.com/user).save
+    send_welcome_email
+    notify_slack
+    if @user.admin?
+      log_new_admin
+    else
+      log_new_user
     end
+    [@user](http://twitter.com/user)
+  end
+
+  # private methods
+end
 ```
 
 Our service object takes a newly instantiated user on initialize, and will either return a saved version of that user, or nil if there were problems saving.
@@ -73,18 +73,18 @@ Our service object takes a newly instantiated user on initialize, and will eithe
 And our slim controller:
 
 ```ruby
-    class UserController < ApplicationController
-      def create
-        user = RegisterUser.new(User.new(user_params)).execute
-        if user
-          redirect_to new_user_welcome_path
-        else
-          render 'new'
-        end
-      end
-
-      # private methods
+class UserController < ApplicationController
+  def create
+    user = RegisterUser.new(User.new(user_params)).execute
+    if user
+      redirect_to new_user_welcome_path
+    else
+      render 'new'
     end
+  end
+
+  # private methods
+end
 ```
 
 We still have an if statement in our controller, but now it’s solely concerned with rendering and redirecting—normal controller concerns.
@@ -103,42 +103,42 @@ A result object should tell us if the service was successful. If yes, it should 
 You could write this as an OpenStruct:
 
 ```ruby
-    class RegisterUser
-      def initialize(user)
-        [@user](http://twitter.com/user) = user
-      end
+class RegisterUser
+  def initialize(user)
+    [@user](http://twitter.com/user) = user
+  end
 
-      def execute
-        return OpenStruct.new(success?: false, user: nil, errors: [@user](http://twitter.com/user).errors) unless [@user](http://twitter.com/user).save
-        send_welcome_email
-        notify_slack
-        if @user.admin?
-          log_new_admin
-        else
-          log_new_user
-        end
-        OpenStruct.new(success?: true, user: [@user](http://twitter.com/user), errors: nil)
-      end
-
-      # private methods
+  def execute
+    return OpenStruct.new(success?: false, user: nil, errors: [@user](http://twitter.com/user).errors) unless [@user](http://twitter.com/user).save
+    send_welcome_email
+    notify_slack
+    if @user.admin?
+      log_new_admin
+    else
+      log_new_user
     end
+    OpenStruct.new(success?: true, user: [@user](http://twitter.com/user), errors: nil)
+  end
+
+  # private methods
+end
 ```
 
 And in our controller:
 
 ```ruby
-    class UserController < ApplicationController
-      def create
-        result = RegisterUser.new(User.new(user_params)).execute
-        if result.success?
-          redirect_to new_user_welcome_path
-        else
-          render 'new', error: result.errors
-        end
-      end
-
-      # private methods
+class UserController < ApplicationController
+  def create
+    result = RegisterUser.new(User.new(user_params)).execute
+    if result.success?
+      redirect_to new_user_welcome_path
+    else
+      render 'new', error: result.errors
     end
+  end
+
+  # private methods
+end
 ```
 
 If we need the user itself, we could still access it via result.user. But the OpenStruct gives us all the information we need about what happened within the service.
@@ -150,39 +150,39 @@ You could also create a Result class instead of using OpenStruct.
 If you find the ServiceObject.new(arguments).execute chain to be ugly, you can simplify it like so:
 
 ```ruby
-    class RegisterUser
-      def self.call(*args, &block)
-        new(*args, &block).execute
-      end
+class RegisterUser
+  def self.call(*args, &block)
+    new(*args, &block).execute
+  end
 
-      def initialize(user)
-        [@user](http://twitter.com/user) = user
-      end
+  def initialize(user)
+    [@user](http://twitter.com/user) = user
+  end
 
-      def execute
-        # old code
-      end
+  def execute
+    # old code
+  end
 
-      # private methods
-    end
+  # private methods
+end
 ```
 
 The self.call method means we can create a new RegisterUser object and invoke execute simply by calling RegisterUser.call(user_arguments).
 
 Here’s it in practice:
 ```ruby
-    class UserController < ApplicationController
-      def create
-        result = RegisterUser.call(User.new(user_params))
-        if result.success?
-          redirect_to new_user_welcome_path
-        else
-          render 'new', error: result.errors
-        end
-      end
-
-      # private methods
+class UserController < ApplicationController
+  def create
+    result = RegisterUser.call(User.new(user_params))
+    if result.success?
+      redirect_to new_user_welcome_path
+    else
+      render 'new', error: result.errors
     end
+  end
+
+  # private methods
+end
 ```
 
 Nothing too crazy, but a little cleaner.
@@ -194,25 +194,25 @@ Let’s say our notify_slack method got out of hand, and we decided to expand *t
 Here’s what it might look like:
 
 ```ruby
-    class RegisterUser
-      def initialize(user)
-        [@user](http://twitter.com/user) = user
-      end
+class RegisterUser
+  def initialize(user)
+    [@user](http://twitter.com/user) = user
+  end
 
-    def execute
-        return OpenStruct.new(success?: false, user: nil, errors: [@user](http://twitter.com/user).errors) unless [@user](http://twitter.com/user).save
-        send_welcome_email
-        NotifySlack.call(@user)
-        if @user.admin?
-          log_new_admin
-        else
-          log_new_user
-        end
-        OpenStruct.new(success?: true, user: [@user](http://twitter.com/user), errors: nil)
-      end
-
-    # private methods
+def execute
+    return OpenStruct.new(success?: false, user: nil, errors: [@user](http://twitter.com/user).errors) unless [@user](http://twitter.com/user).save
+    send_welcome_email
+    NotifySlack.call(@user)
+    if @user.admin?
+      log_new_admin
+    else
+      log_new_user
     end
+    OpenStruct.new(success?: true, user: [@user](http://twitter.com/user), errors: nil)
+  end
+
+# private methods
+end
 ```
 
 Seems fine, but as [Dave Copeland](https://multithreaded.stitchfix.com/blog/2015/06/02/anatomy-of-service-objects-in-rails/) notes, the RegisterUser service now knows how to both create and invoke the NotifySlack service.
@@ -223,31 +223,31 @@ As he writes:
 His solution? Extract the creation of the child service object to a private method:
 
 ```ruby
-    class RegisterUser
-      def initialize(user)
-        [@user](http://twitter.com/user) = user
-      end
+class RegisterUser
+  def initialize(user)
+    [@user](http://twitter.com/user) = user
+  end
 
-      def execute
-        return OpenStruct.new(success?: false, user: nil, errors: [@user](http://twitter.com/user).errors) unless [@user](http://twitter.com/user).save
-        send_welcome_email
-        notify_slack_service.execute
-        if @user.admin?
-          log_new_admin
-        else
-          log_new_user
-        end
-        OpenStruct.new(success?: true, user: [@user](http://twitter.com/user), errors: nil)
-      end
-
-      private
-
-      def notify_slack_service
-        [@notify_slack_service](http://twitter.com/notify_slack_service) ||= NotifySlack.new([@user](http://twitter.com/user))
-      end
-
-      # private methods
+  def execute
+    return OpenStruct.new(success?: false, user: nil, errors: [@user](http://twitter.com/user).errors) unless [@user](http://twitter.com/user).save
+    send_welcome_email
+    notify_slack_service.execute
+    if @user.admin?
+      log_new_admin
+    else
+      log_new_user
     end
+    OpenStruct.new(success?: true, user: [@user](http://twitter.com/user), errors: nil)
+  end
+
+  private
+
+  def notify_slack_service
+    [@notify_slack_service](http://twitter.com/notify_slack_service) ||= NotifySlack.new([@user](http://twitter.com/user))
+  end
+
+  # private methods
+end
 ```
 
 Note that this doesn’t work with our fancy call business above.

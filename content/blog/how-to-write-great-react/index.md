@@ -1,6 +1,6 @@
 ---
 title: How to write great React
-date: "2019-08-19T22:12:03.284Z"
+date: '2019-08-19T22:12:03.284Z'
 description: Five points to remember
 ---
 
@@ -30,18 +30,20 @@ So how do we write good components? First step: **always treat them as functions
 
 Some React components are functions.
 
-    const Button = ({ text, onClick }) => (
-      <button onClick={onClick}>{text}</button>
-    )
+```jsx
+const Button = ({ text, onClick }) => <button onClick={onClick}>{text}</button>;
+```
 
 Others are not functions, but classes with a render method.
 
-    class Button extends Component {
-      render() {
-        const { text, onClick } = this.props;
-        return <button onClick={onClick}>{text}</button>;
-      }
-    }
+```jsx
+class Button extends Component {
+  render() {
+    const { text, onClick } = this.props;
+    return <button onClick={onClick}>{text}</button>;
+  }
+}
+```
 
 Even in the first case, **it’s easy to stop thinking of components as functions**. We start conceptualizing a component as its own entity, governed by different rules.
 
@@ -57,7 +59,7 @@ Here’s why.
 
 Let’s step away from React for a moment, and ask: **what makes a good function?**
 
-Robert Martin’s classic *Clean Code* highlights five factors:
+Robert Martin’s classic _Clean Code_ highlights five factors:
 
 1. Small
 
@@ -72,13 +74,14 @@ Robert Martin’s classic *Clean Code* highlights five factors:
 Let’s talk about each of these rules in turn, and what they mean for our React components.
 
 ### Your component should be small
+
 > The first rule of functions is that they should be small. The second rule of functions is that **they should be smaller than that**. — Clean Code
 
 Small functions are easier to read. Nobody wants to work with a 500-line function. Robert Martin argues functions should rarely be longer than 20 lines.
 
 With React components, the rules are a bit different, since JSX tends to take up more lines even for simple elements.
 
-50 lines is a good rule of thumb for the body of your component (for class components, that is the *render* method). If looking at the total lines of the file is easier, **most component files should not exceed 250 lines**. Under 100 is ideal.
+50 lines is a good rule of thumb for the body of your component (for class components, that is the _render_ method). If looking at the total lines of the file is easier, **most component files should not exceed 250 lines**. Under 100 is ideal.
 
 **Keep your components small.**
 
@@ -86,13 +89,13 @@ With React components, the rules are a bit different, since JSX tends to take up
 
 ### Your component should do one thing
 
-I wrote extensively on this subject in my article[ *Tiny Components: What could go wrong?](https://blog.bitsrc.io/tiny-components-what-can-go-wrong-d6aa42d71370).*
+I wrote extensively on this subject in my article[ \*Tiny Components: What could go wrong?](https://blog.bitsrc.io/tiny-components-what-can-go-wrong-d6aa42d71370).*
 [**Tiny Components: What Can Go Wrong?**
-*Using the Single Responsibility Principle to build better apps*blog.bitsrc.io](https://blog.bitsrc.io/tiny-components-what-can-go-wrong-d6aa42d71370)
+*Using the Single Responsibility Principle to build better apps*](https://blog.bitsrc.io/tiny-components-what-can-go-wrong-d6aa42d71370)
 
 In short, your components should have only one main responsibility: **one reason to change**.
 
-If you need to change MenuList.jsx because you’ve decided to switch up the order of the menu items, that’s good. If you *also* need to change MenuList.jsx because you’ve adjusted how the sidebar opens, that’s bad.
+If you need to change MenuList.jsx because you’ve decided to switch up the order of the menu items, that’s good. If you _also_ need to change MenuList.jsx because you’ve adjusted how the sidebar opens, that’s bad.
 
 **Split your UI into tiny chunks that each handle one thing.**
 
@@ -102,72 +105,78 @@ If you need to change MenuList.jsx because you’ve decided to switch up the ord
 
 Here’s a function with multiple levels of abstraction (pseudo-code):
 
-    const loadThings = async () => {
-        setIsLoading(true);
-        const response = await fetchThings();
-        setIsLoading(false);
-        const { error, data } = response;
-        if (error) {
-            if (error.status === 404) {
-                redirectTo('/404');
-            } else if (error.status === 500) {
-                redirectTo('/error');
-            }
-        } else {
-            const thingsToUpdate = data.ids.reduce((map, id) => {
-                map[id] = data.things[id];
+```jsx
+const loadThings = async () => {
+  setIsLoading(true);
+  const response = await fetchThings();
+  setIsLoading(false);
+  const { error, data } = response;
+  if (error) {
+    if (error.status === 404) {
+      redirectTo('/404');
+    } else if (error.status === 500) {
+      redirectTo('/error');
+    }
+  } else {
+    const thingsToUpdate = data.ids.reduce((map, id) => {
+      map[id] = data.things[id];
 
-                return map;
-            }, {});
+      return map;
+    }, {});
 
-            updateThingsInState(thingsToUpdate);
-        }
-    };
+    updateThingsInState(thingsToUpdate);
+  }
+};
+```
 
 Note that some things are abstracted away to other functions: setting the loading state and fetching the response from the server. Others are not: redirecting on error, and updating the things in state.
 
 Here’s a cleaner approach:
 
-    const handleResponse = (response) => {
-        const { error, data } = response;
-        if (error) {
-            handleError(error);
-        } else {
-            updateThingsInState(data);
-        }
-    };
+```jsx
+const handleResponse = (response) => {
+  const { error, data } = response;
+  if (error) {
+    handleError(error);
+  } else {
+    updateThingsInState(data);
+  }
+};
 
-    const loadThings = async () => {
-        setIsLoading(true);
-        const response = await fetchThings();
-        setIsLoading(false);
-        handleResponse(response);
-    };
+const loadThings = async () => {
+  setIsLoading(true);
+  const response = await fetchThings();
+  setIsLoading(false);
+  handleResponse(response);
+};
+```
 
 Now loadThings is easy to read. Line by line, it invokes other functions to handle the tasks involved with loading the data. Our new function handleResponse is also simple, containing a single condition. One level of abstraction throughout.
 
 Here’s a mixed-abstraction React component:
 
-    const Dashboard = () => {
-        return (
-            <div className="Dashboard">
-                <header>
-                    <h1>Too Little Abstraction Corp.</h1>
-                    <nav>
-                        <a href="/about">About</a>
-                        <a href="/mission">Mission</a>
-                        <a href="/faq">FAQ</a>
-                        <a href="/contact">Contact</a>
-                    </nav>
-                </header>
-                <ProductDescription />
-                <EmailSubscriptionForm />
-                <footer>
-                  <h2>Thanks for visiting!</h2>
-                </footer>
-            </div>
-        )
-    }
+```jsx
+const Dashboard = () => {
+    return (
+      <div className="Dashboard">
+        <header>
+          <h1>Too Little Abstraction Corp.</h1>
+          <nav>
+            <a href="/about">About</a>
+            <a href="/mission">Mission</a>
+            <a href="/faq">FAQ</a>
+            <a href="/contact">Contact</a>
+          </nav>
+        </header>
+        <ProductDescription />
+        <EmailSubscriptionForm />
+        <footer>
+        <h2>Thanks for visiting!</h2>
+      </footer>
+    </div>
+  )
+}
+```
 
 Some of the markup is abstracted into subcomponents (<ProductDescription />, <EmailSubscriptionForm />) but the header and footer are not.
 
@@ -177,16 +186,18 @@ Our Dashboard component is doing too much. There’s too many reasons to change 
 
 Solution:
 
-    const Dashboard = () => {
-        return (
-            <div className="Dashboard">
-                <Header />
-                <ProductDescription />
-                <EmailSubscriptionForm />
-                <Footer />
-            </div>
-        )
-    }
+```jsx
+const Dashboard = () => {
+  return (
+    <div className="Dashboard">
+      <Header />
+      <ProductDescription />
+      <EmailSubscriptionForm />
+      <Footer />
+    </div>
+  )
+}
+```
 
 Incredibly easy to read. You’ll almost never have to touch this file, unless you decide to add a new subcomponent.
 
@@ -194,16 +205,17 @@ Each subcomponent can also be shared and modified as needed. When you edit Heade
 
 Mixed abstraction is an easy trap to fall into, because it makes sense at the time (“I’m only adding a little markup, it doesn’t need to be its own component!”). But over time it leads to complex components that are difficult to parse.
 
-If you try to keep your components at *roughly* one level of abstraction (with a few minor exceptions, such as wrapping divs, being acceptable), they’ll be much easier to maintain.
+If you try to keep your components at _roughly_ one level of abstraction (with a few minor exceptions, such as wrapping divs, being acceptable), they’ll be much easier to maintain.
 
 **Limit your components to one level of abstraction.**
 
 ![](./principle3.png)
 
 ### Your component should have only a few arguments (props)
+
 > **The ideal number of arguments for a function** is zero (niladic). Next comes one (monadic), followed closely by two (dyadic). Three **arguments** (triadic) should be avoided where possible. More than three (polyadic) requires very special justification — and then shouldn’t be used anyway.. — Clean Code
 
-Yes, *technically* React components only receive two arguments, props and context. But props are, in essence, parameters to your function, and should be treated as such.
+Yes, _technically_ React components only receive two arguments, props and context. But props are, in essence, parameters to your function, and should be treated as such.
 
 In practice, writing components with one to two props is really hard, especially since some components consume props in order to pass them down to subcomponents.
 
