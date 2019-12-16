@@ -10,6 +10,12 @@ module.exports = {
   },
   plugins: [
     {
+      resolve: 'gatsby-plugin-mailchimp',
+      options: {
+        endpoint: 'https://small-habits.us11.list-manage.com/subscribe/post?u=1c1b1269cf6ae05d6c056a081&amp;id=e5992b04cf',
+      },
+    },
+    {
       resolve: `gatsby-source-filesystem`,
       options: {
         path: `${__dirname}/content/blog`,
