@@ -4,13 +4,16 @@ date: '2019-12-23T22:12:03.284Z'
 description: Write & deploy a Rails app in no time at all
 ---
 
+![](./banner.png)
+Photo by [CMDR Shane](https://unsplash.com/@cmdrshane)
+
 In this quick & dirty tutorial, we make a Rails API with endpoints for authentication, using JSON Web Tokens (JWT). Then, we deploy it to Heroku.
 
 This tutorial is for you if you want to create a back-end for a web/mobile app, and also want to get past the boring authentication boilerplate.
 
 Let's dive in!
 
-**Note that I am using Rails 6.0.2.1 and Ruby 2.4.4**
+**Note that I am using Rails 6.0.2.1 and Ruby 2.4.4 for this tutorial.**
 
 ## Creating our API and User model
 
@@ -303,7 +306,8 @@ To test the API, run the same Postman requests as before, but substitute your He
 
 If all works, then you're done! You have a working API with authentication support! Now, all you need is a front-end... but more on that to come. Subscribe below if you want to learn how to hook this API up to a mobile app.
 
-## Source
+## Sources
 
 https://www.sitepoint.com/authenticate-your-rails-api-with-jwt-from-scratch/
+
 https://medium.com/@wintermeyer/authentication-from-scratch-with-rails-5-2-92d8676f6836
