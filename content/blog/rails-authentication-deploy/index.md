@@ -4,7 +4,7 @@ date: '2019-12-23T22:12:03.284Z'
 description: Write & deploy a Rails app in no time at all
 ---
 
-![](./banner.png)
+![](./banner.jpg)
 Photo by [CMDR Shane](https://unsplash.com/@cmdrshane)
 
 In this quick & dirty tutorial, we make a Rails API with endpoints for authentication, using JSON Web Tokens (JWT). Then, we deploy it to Heroku.
