@@ -301,5 +301,75 @@ If the request succeeds (which it should automatically), we should see our fake 
 
 If you pass in `false` as the last parameter of `login`, you should NOT be redirected, and you should see the error in the console.
 
+We can do something similar for `createAccount`:
+```jsx
+import React from 'react';
+import { View, Text, Button } from 'react-native';
+import { createAccount } from '../api/mock';
+
+const CreateAccount = ({ navigation }) => {
+  const createUser = () => {
+    createAccount('test@test.ca', 'password')
+      .then((val) => {
+        navigation.navigate('Home');
+      })
+      .catch((err) => console.log('error:', err));
+  };
+
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>CreateAccount</Text>
+      <Button title="Create user" onPress={createUser} />
+      <Button title="Log in" onPress={() => navigation.navigate('Login')} />
+    </View>
+  );
+};
+
+export default CreateAccount;
+```
+
+### Error display
+
+When our login/signup fails, we want to show a message to the user. This is easy to do with [React hooks](https://reactjs.org/docs/hooks-intro.html).
+
+Here's an example for `LoginScreen`:
+
+```jsx
+import React, { useState } from 'react';
+import { View, Text, Button } from 'react-native';
+import { login } from '../api/mock';
+
+const LoginScreen = ({ navigation }) => {
+  const [errorMessage, setErrorMessage] = useState('');
+  const loginUser = () => {
+    setErrorMessage('');
+    login('test@test.ca', 'password', false)
+      .then(() => {
+        navigation.navigate('Home');
+      })
+      .catch((res) => setErrorMessage(res.error));
+  };
+
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>LoginScreen</Text>
+      <Button title="Log in" onPress={loginUser} />
+      <Button
+        title="Create account"
+        onPress={() => navigation.navigate('CreateAccount')}
+      />
+      {errorMessage ? <Text>{errorMessage}</Text> : null}
+    </View>
+  );
+};
+
+export default LoginScreen;
+```
+
+When the request fails, the error mesage should appear below the buttons.
+
+You can copy this code for `CreateAccountScreen`.
+(Some may point out that these two screens are very similar and could share code. We'll fix this in the future!)
+
 
 
