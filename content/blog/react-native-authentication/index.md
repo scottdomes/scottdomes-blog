@@ -80,15 +80,15 @@ For now, each file can look roughly like so:
 import React from 'react';
 import { View, Text } from 'react-native';
 
-export default class LoginScreen extends React.Component {
-  render() {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>LoginScreen</Text>
-      </View>
-    );
-  }
+const LoginScreen = () => {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>LoginScreen</Text>
+    </View>
+  );
 }
+
+export default LoginScreen;
 ```
 
 ### Creating our navigator between screens
@@ -135,19 +135,16 @@ HomeScreen:
 import React from 'react';
 import { View, Text, Button } from 'react-native';
 
-export default class HomeScreen extends React.Component {
-  render() {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>HomeScreen</Text>
-        <Button
-          title="Log out"
-          onPress={() => this.props.navigation.navigate('Login')}
-        />
-      </View>
-    );
-  }
-}
+const HomeScreen = ({ navigation }) => {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>HomeScreen</Text>
+      <Button title="Log out" onPress={() => navigation.navigate('Login')} />
+    </View>
+  );
+};
+
+export default HomeScreen;
 ```
 
 LoginScreen:
@@ -155,23 +152,23 @@ LoginScreen:
 import React from 'react';
 import { View, Text, Button } from 'react-native';
 
-export default class LoginScreen extends React.Component {
-  render() {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>LoginScreen</Text>
-        <Button
-          title="Log in"
-          onPress={() => this.props.navigation.navigate('Home')}
-        />
-        <Button
-          title="Create account"
-          onPress={() => this.props.navigation.navigate('CreateAccount')}
-        />
-      </View>
-    );
-  }
-}
+const LoginScreen = ({ navigation }) => {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>LoginScreen</Text>
+      <Button
+        title="Log in"
+        onPress={() => navigation.navigate('Home')}
+      />
+      <Button
+        title="Create account"
+        onPress={() => navigation.navigate('CreateAccount')}
+      />
+    </View>
+  );
+};
+
+export default LoginScreen;
 ```
 
 ... and I'm sure you can figure out `CreateAccountScreen` from there.
@@ -222,4 +219,87 @@ export const login = (email, password, shouldSucceed = true) => {
 
 The `shouldSucceed` parameter allows us to dictate if we want to mock the success of failure of this request. This parameter is for development only, and will soon be removed.
 
-If the request is successful, we return a JSON web token (for more, see (my Rails authentication tutorial)[https://scottdomes.com/rails-authentication-deploy/])
+If the request is successful, we return a JSON web token (for more, see (my Rails authentication tutorial)[https://scottdomes.com/rails-authentication-deploy/]).
+
+If the request is not successful, we return a human-readable error.
+
+Make the same method for `createAccount`: 
+```js
+export const createAccount = (email, password, shouldSucceed = true) => {
+  console.log(email, password);
+
+  if (!shouldSucceed) {
+    return mockFailure({ error: 'Something went wrong!' });
+  }
+
+  return mockSuccess({ auth_token: 'successful_fake_token' });
+};
+```
+
+And then a couple of methods for fetching the list of users:
+```js
+const getAuthenticationToken = () => 'successful_fake_token';
+
+export const getUsers = (shouldSucceed = true) => {
+  const token = getAuthenticationToken();
+
+  if (!shouldSucceed) {
+    return mockFailure({ error: 'Invalid Request' });
+  }
+
+  return mockSuccess({
+    users: [
+      {
+        email: 'test@test.ca',
+      },
+      {
+        email: 'test2@test.ca',
+      },
+    ],
+  });
+};
+```
+
+This method will send the appropriate token. We'll load the user list from the `HomeScreen`. The error ('Invalid Request') will let us know the user is not properly authenticated, and should return to the `LoginScreen`.
+
+Now that our mock API is in place, let's start wiring requests to our screens.
+
+### Login request
+
+Inside our `LoginScreen`, make a new method to call the `login` method:
+
+```jsx
+import React from 'react';
+import { View, Text, Button } from 'react-native';
+import { login } from '../api/mock';
+
+const LoginScreen = ({ navigation }) => {
+  const loginUser = () => {
+    login('test@test.ca', 'password')
+      .then(() => {
+        navigation.navigate('Home');
+      })
+      .catch((err) => console.log('error:', err));
+  };
+
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>LoginScreen</Text>
+      <Button title="Log in" onPress={loginUser} />
+      <Button
+        title="Create account"
+        onPress={() => navigation.navigate('CreateAccount')}
+      />
+    </View>
+  );
+};
+
+export default LoginScreen;
+```
+
+If the request succeeds (which it should automatically), we should see our fake email + password logged in the console, and then after 2 seconds we will be redirected to the `HomeScreen`.
+
+If you pass in `false` as the last parameter of `login`, you should NOT be redirected, and you should see the error in the console.
+
+
+
