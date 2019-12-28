@@ -178,3 +178,5 @@ export default class LoginScreen extends React.Component {
 
 With that done, you should be able to click around your app, moving from screen to screen. Success!
 
+![](./navigation.png)
+
