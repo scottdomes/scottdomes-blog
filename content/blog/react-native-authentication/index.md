@@ -24,3 +24,19 @@ You need a general knowledge of how modern JavaScript development works. I won't
 Follow [this guide](https://facebook.github.io/react-native/docs/getting-started.html) to install dependencies and create your project. This tutorial will be aimed at developing for iOS as the target OS, using the React Native CLI approach (rather than Expo). If you want to use Expo and/or Android, you can probably modify some of the content to make it work.
 
 Our project name can be whatever you want, but I'll be using `AuthenticationBoilerplate`.
+
+By the end of the linked guide, you should have your project created and running in the iOS simulator.
+
+## Part 1: Navigation
+
+Our app includes the following navigation flows:
+- When the user logs in successfully, they are taken to the home screen.
+- When the user clicks the 'Create account' on the login screen, they are taken to the signup screen.
+- When the user clicks the 'Log in' link on the signup screen, they are taken to the login screen.
+- When the user clicks the 'Log out' link on the home screen, they are taken to the login screen.
+
+A whole bunch of functionality will need to happen between this navigation, but making sure we can navigate successfully seems like a good start.
+
+To support moving between screens, we're going to use the `react-navigation` package.
+
+### Setting up `react-navigation`
