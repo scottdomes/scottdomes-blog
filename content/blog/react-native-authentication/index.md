@@ -180,3 +180,46 @@ With that done, you should be able to click around your app, moving from screen 
 
 ![](./navigation.png)
 
+## Mock API
+
+For real authentication, we'll call an API similar to the one we built in (my Rails authentication tutorial)[https://scottdomes.com/rails-authentication-deploy/]. But for now, for easy development, we're going to create a mock API.
+
+A good mock API should do three things:
+1. Include a delay for sending/receiving data.
+2. Mimic the inputs and outputs of a request.
+
+In our `src/` directory, create a new folder called `api/` and a new file called `mock.js` inside.
+
+Two initial methods:
+```js
+const mockSuccess = (value) => {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(value), 2000);
+  });
+};
+
+const mockFailure = (value) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => reject(value), 2000);
+  });
+};
+```
+
+These methods mock the success or failure of an API call (based on a promise) after two seconds, and return the passed-in value.
+
+This allows us to create our login method:
+```js
+export const login = (email, password, shouldSucceed = true) => {
+  console.log(email, password);
+
+  if (!shouldSucceed) {
+    return mockFailure({ error: 'Something went wrong!' });
+  }
+
+  return mockSuccess({ auth_token: 'successful_fake_token' });
+};
+```
+
+The `shouldSucceed` parameter allows us to dictate if we want to mock the success of failure of this request. This parameter is for development only, and will soon be removed.
+
+If the request is successful, we return a JSON web token (for more, see (my Rails authentication tutorial)[https://scottdomes.com/rails-authentication-deploy/])
