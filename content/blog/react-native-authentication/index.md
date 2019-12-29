@@ -490,3 +490,99 @@ export const setToken = async (token) => {
 
 We add a getter and setter for `@auth_token`, along with some very basic error handling. Note that if the token is not get or set properly, the effect will be the user being redirected to the login screen on their next failed request.
 
+### Wiring up our token
+
+Here's how we can modify `LoginScreen` to set the token after a successful request:
+
+```jsx
+import React, { useState } from 'react';
+import { View, Text, Button } from 'react-native';
+import { login } from '../api/mock';
+import { setToken } from '../api/token';
+
+const LoginScreen = ({ navigation }) => {
+  const [errorMessage, setErrorMessage] = useState('');
+  const loginUser = () => {
+    setErrorMessage('');
+    login('test@test.ca', 'password')
+      .then((res) => {
+        setToken(res.auth_token);
+        navigation.navigate('Home');
+      })
+      .catch((err) => setErrorMessage(err.message));
+  };
+
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>LoginScreen</Text>
+      <Button title="Log in" onPress={loginUser} />
+      <Button
+        title="Create account"
+        onPress={() => navigation.navigate('CreateAccount')}
+      />
+      {errorMessage ? <Text>{errorMessage}</Text> : null}
+    </View>
+  );
+};
+
+export default LoginScreen;
+```
+
+We can do the same on `CreateAccountScreen`.
+
+Note that for cleanliness, we will eventually abstract the token setting out of this component, since it's not really [that component's responsibility\(https://scottdomes.com/tiny-components/). But baby steps.
+
+As for token setting, in `api/mock.js`, we can import the right method:
+```js
+import { getToken } from './token';
+```
+
+And then use it:
+```js
+export const getUsers = (shouldSucceed = true) => {
+  const token = getToken();
+
+  if (!shouldSucceed) {
+    return mockFailure({ error: 401, message: 'Invalid Request' });
+  }
+
+  return mockSuccess({
+    users: [
+      {
+        email: 'test@test.ca',
+      },
+      {
+        email: 'test2@test.ca',
+      },
+    ],
+  });
+};
+```
+
+Try logging in now (with `shouldSucceed` set to `true` for all requests). Everything should work smoothly. Nice!
+
+One last piece of the puzzle. When the user logs out, we should delete the token.
+
+Inside `HomeScreen`:
+```jsx
+  logOut = () => {
+    setToken(null);
+    this.props.navigation.navigate('Login');
+  };
+
+  render() {
+    const { users, userLoadingErrorMessage } = this.state;
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>HomeScreen</Text>
+        {users.map((user) => (
+          <Text key={user.email}>{user.email}</Text>
+        ))}
+        {userLoadingErrorMessage ? (
+          <Text>{userLoadingErrorMessage}</Text>
+        ) : null}
+        <Button title="Log out" onPress={this.logOut} />
+      </View>
+    );
+  }
+```
