@@ -626,4 +626,145 @@ Fortunately, the modification is an easy one:
   }
 ```
 
-We're still using `componentDidMount`, but now using it to register a subscription to the navigation event. Try the following flow above, and see how loading the users now works! NICE.
+We're still using `componentDidMount`, but now using it to register a subscription to the navigation event. Try the following flow above, and see how loading the users now works! Nice.
+
+One last fix: when a user logs out and logs in as a different user, they will see the previous user's data. We can make a small change to fix that:
+
+```jsx
+  logOut = async () => {
+    this.setState({ hasLoadedUsers: false, users: [] })
+    await setToken('');
+    this.props.navigation.navigate('Login');
+  };
+```
+
+## Forms
+
+The funny thing about our login form... is that it's not actually a form.
+
+Let's add some proper fields for accepting the user's email and password, both for creating an account and logging in.
+
+Create a new folder, `src/forms/`. Inside that folder, create a file called `EmailForm.js`.
+
+This component is going to be very simple. It allows the user to input an email and password. We can use it for both `LoginScreen` and `CreateAccountScreen`. 
+
+`EmailForm.js`:
+```jsx
+import React, { useState } from 'react';
+import { ScrollView, StyleSheet, TextInput, Button } from 'react-native';
+import { setToken } from '../api/token';
+
+const EmailForm = ({ buttonText, onSubmit, children, onAuthentication }) => {
+  const [email, onChangeEmail] = useState('');
+  const [password, onChangePassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const submit = () => {
+    onSubmit(email, password)
+      .then(async (res) => {
+        await setToken(res.auth_token);
+        onAuthentication();
+      })
+      .catch((res) => setErrorMessage(res.error));
+  };
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <TextInput
+        style={styles.input}
+        onChangeText={(text) => onChangeEmail(text)}
+        value={email}
+        keyboardType="email-address"
+      />
+      <TextInput
+        style={styles.input}
+        onChangeText={(text) => onChangePassword(text)}
+        value={password}
+        secureTextEntry
+      />
+      <Button title={buttonText} onPress={submit} />
+      {errorMessage ? <Text>{errorMessage}</Text> : null}
+      {children}
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  input: {
+    height: 40,
+    width: 300,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginTop: 20,
+  },
+});
+
+export default EmailForm;
+```
+
+There's a lot happening here. Let's go through it:
+1. This component manages the email, password, and error message state.
+2. When the user submits the form by clicking the button, we call whatever `onSubmit` prop was passed in. 
+3. Then, we take care of setting the auth token from the result.
+4. Lastly, we call the `onAuthentication` prop, which will handle navigation.
+
+We use a `ScrollView` so the user can keep the input fields in view when the keyboard is activated.
+
+Here's it in action with `LoginScreen`:
+```jsx
+import React, { useState } from 'react';
+import { View, Text, Button } from 'react-native';
+import { login } from '../api/mock';
+import EmailForm from '../forms/EmailForm';
+
+const LoginScreen = ({ navigation }) => {
+  return (
+    <EmailForm
+      buttonText="Log in"
+      onSubmit={login}
+      onAuthentication={() => navigation.navigate('Home')}
+    >
+      <Button
+        title="Create account"
+        onPress={() => navigation.navigate('CreateAccount')}
+      />
+    </EmailForm>
+  );
+};
+
+export default LoginScreen;
+```
+
+You can see this vastly simplifies our original component. We can still pass in the link to go to the `CreateAccountScreen` as a child prop, but most of the logic is moved out of this component, which is a good thing.
+
+`CreateAccountScreen` is equally clean:
+```jsx
+import React, { useState } from 'react';
+import { View, Text, Button } from 'react-native';
+import { createAccount } from '../api/mock';
+import EmailForm from '../forms/EmailForm';
+
+const CreateAccount = ({ navigation }) => {
+  return (
+    <EmailForm
+      buttonText="Sign up"
+      onSubmit={createAccount}
+      onAuthentication={() => navigation.navigate('Home')}
+    >
+      <Button
+        title="Back to log in"
+        onPress={() => navigation.navigate('Login')}
+      />
+    </EmailForm>
+  );
+};
+
+export default CreateAccount;
+```
+
+As promised, these screens now have as little shared code as is reasonable.
