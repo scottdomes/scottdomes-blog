@@ -221,7 +221,7 @@ export const login = (email, password, shouldSucceed = true) => {
 
 The `shouldSucceed` parameter allows us to dictate if we want to mock the success of failure of this request. This parameter is for development only, and will soon be removed.
 
-If the request is successful, we return a JSON web token (for more, see (my Rails authentication tutorial)[https://scottdomes.com/rails-authentication-deploy/]).
+If the request is successful, we return a JSON web token. For more, see [my Rails authentication tutorial](https://scottdomes.com/rails-authentication-deploy/).
 
 If the request is not successful, we return a human-readable error.
 
