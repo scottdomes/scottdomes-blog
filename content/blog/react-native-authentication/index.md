@@ -1,6 +1,6 @@
 ---
 title: Simple React Native authentication
-date: "2019-08-19T22:12:03.284Z"
+date: "2019-12-28T22:12:03.284Z"
 description: Learn how to build up an onboarding and login flow with React Native
 ---
 
