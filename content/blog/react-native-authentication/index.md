@@ -651,7 +651,7 @@ This component is going to be very simple. It allows the user to input an email 
 `EmailForm.js`:
 ```jsx
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, TextInput, Button } from 'react-native';
+import { ScrollView, StyleSheet, TextInput, Button, Text } from 'react-native';
 import { setToken } from '../api/token';
 
 const EmailForm = ({ buttonText, onSubmit, children, onAuthentication }) => {
@@ -768,3 +768,170 @@ export default CreateAccount;
 ```
 
 As promised, these screens now have as little shared code as is reasonable.
+
+## Hooking up to a real API (optional)
+
+This is the last step: to get rid of our mock methods and use a real API.
+
+For this part, I'll be relying on the API I built and deployed in [my Rails authentication tutorial](https://scottdomes.com/rails-authentication-deploy/). I recommend you go through that tutorial _first_.
+
+### Setting the URL
+
+The first thing we'll need to do is to include our API URL in the project. You probably don't want to expose this publicly on Git, so let's create a `secrets.js` file in the project root, and include that in our `.gitignore`.
+
+`secrets.js`:
+```js
+export const API_URL = <YOUR URL>
+```
+
+We can now import this to our request files.
+
+### Replacing our mocks
+
+Make three new files in `src/api/`: `fetch.js`, `authentication.js`, and `users.js`.
+
+We'll use `fetch.js` to handle interactions with the `fetch` request API:
+```js
+import { API_URL } from '../../secrets';
+import { getToken } from './token';
+
+const getHeaders = async () => {
+  const token = await getToken();
+  const headers = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  return headers;
+};
+
+export const post = async (destination, body) => {
+  const headers = await getHeaders();
+
+  const result = await fetch(`${API_URL}${destination}`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(body),
+  });
+
+  console.log(result);
+
+  if (result.ok) {
+    return await result.json();
+  }
+  throw { error: result.status };
+};
+
+export const get = async (destination) => {
+  const headers = await getHeaders();
+
+  const result = await fetch(`${API_URL}${destination}`, {
+    method: 'GET',
+    headers,
+  });
+
+  if (result.ok) {
+    return await result.json();
+  }
+
+  throw { error: result.status };
+};
+```
+
+The above creates helper methods for making `POST` and `GET` requests using the token, if available.
+
+In `authentication.js`, we'll handle login/signup requests:
+```js
+import { post } from './fetch';
+
+export const login = (email, password) => {
+  return post('/users/login', {
+    user: { email, password },
+  });
+};
+
+export const createAccount = (email, password) => {
+  return post('/users', {
+    user: { email, password },
+  });
+};
+```
+
+And lastly, in `users.js`, we'll handle requests related to users:
+```js
+import { get } from './fetch';
+
+export const getUsers = (email, password) => {
+  return get('/users');
+};
+```
+
+Now, the easy part. In our three screens, replace the import from `../api/mock` with the relevant file.
+
+`LoginScreen` looks like this, just a changed import:
+```jsx
+import React, { useState } from 'react';
+import { View, Text, Button } from 'react-native';
+import { login } from '../api/authentication';
+import EmailForm from '../forms/EmailForm';
+
+const LoginScreen = ({ navigation }) => {
+  return (
+    <EmailForm
+      buttonText="Log in"
+      onSubmit={login}
+      onAuthentication={() => navigation.navigate('Home')}
+    >
+      <Button
+        title="Create account"
+        onPress={() => navigation.navigate('CreateAccount')}
+      />
+    </EmailForm>
+  );
+};
+
+export default LoginScreen;
+```
+
+`HomeScreen` is a bit different, in that our `users` array will no longer be nested:
+```jsx
+import React from 'react';
+import { View, Text, Button } from 'react-native';
+import { getUsers } from '../api/users';
+import { setToken } from '../api/token';
+
+export default class HomeScreen extends React.Component {
+  state = { users: [], hasLoadedUsers: false, userLoadingErrorMessage: '' };
+
+  loadUsers() {
+    this.setState({ hasLoadedUsers: false, userLoadingErrorMessage: '' });
+    getUsers()
+      .then((users) => { // See here
+        this.setState({
+          hasLoadedUsers: true,
+          users,
+        });
+      })
+      .catch(this.handleUserLoadingError);
+  }
+```
+
+I made one small change to `EmailForm`, to allow the display of a general error message if the error is not request-related:
+```jsx
+      .catch((res) => {
+        if (res && res.error) {
+          setErrorMessage(res.error);
+        }
+
+        setErrorMessage('Something went wrong.');
+      });
+```
+
+Other than that, your code should work out of the box! Try signing in, loading users, and creating an account.
+
+## Conclusion
+
