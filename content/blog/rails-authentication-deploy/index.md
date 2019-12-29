@@ -193,11 +193,11 @@ class UsersController < ApplicationController
   def login
     user = User.find_by(email: user_params[:email].to_s.downcase)
 
-    if user && user.authenticate(user_params[:password])
-        auth_token = JsonWebToken.encode({user_id: user.id})
-        render json: {auth_token: auth_token}, status: :ok
+    if user&.authenticate(user_params[:password])
+      auth_token = JsonWebToken.encode(user_id: user.id)
+      render json: { auth_token: auth_token }, status: :ok
     else
-      render json: { error: 'Invalid username / password' }, status: :unauthorized
+      render json: { error: 'Invalid username/password' }, status: :unauthorized
     end
   end
 
@@ -242,6 +242,27 @@ To create a user, send a POST to `http://localhost:3000/users` with a `raw` body
 Then, you can log in by sending another POST to `http://localhost:3000/users/login` with the same body. You should get back an authentication token.
 
 Add that authentication token as the Authorization header, and then try again to GET `/users`. This time, it should succeed. Nice!
+
+## Returning a token on user creation
+
+When a user signs up for our app, we want to redirect them straight to the app content, not make them sign in again.
+
+As such, we need to send the auth token back when a user is created.
+
+Make the following change to the `create` method in `UsersController`:
+```ruby
+  # POST /users
+def create
+  @user = User.new(user_params)
+
+  if @user.save && @user.authenticate(user_params[:password])
+    auth_token = JsonWebToken.encode(user_id: @user.id)
+    render json: { auth_token: auth_token }, status: :ok
+  else
+    render json: @user.errors, status: :unprocessable_entity
+  end
+end
+```
 
 ## Deployment
 
