@@ -436,6 +436,8 @@ Try experimenting with the various results listed above. You can pass `false` to
 
 We've now successfully mocked the login flow for our app. Now we start making it more real. First step: start _really_ using an authentication token.
 
+![](./homescreen.png)
+
 ## Storing the auth token
 
 With our final app, our authentication flow will go like so:
@@ -769,6 +771,8 @@ export default CreateAccount;
 
 As promised, these screens now have as little shared code as is reasonable.
 
+![](./form.png)
+
 ## Hooking up to a real API (optional)
 
 This is the last step: to get rid of our mock methods and use a real API.
@@ -935,3 +939,6 @@ Other than that, your code should work out of the box! Try signing in, loading u
 
 ## Conclusion
 
+You did it! You built a full authentication workflow for a React Native application. This is something you'll have to do for most apps, but now you can refer back to this guide (or your project code) to get it done as fast as possible.
+
+Thanks for reading! If this guide has been helpful, consider subscribing below. I have a lot more content planned along these lines.
