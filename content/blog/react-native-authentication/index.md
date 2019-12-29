@@ -502,11 +502,11 @@ import { setToken } from '../api/token';
 
 const LoginScreen = ({ navigation }) => {
   const [errorMessage, setErrorMessage] = useState('');
-  const loginUser = () => {
+  const loginUser = async () => {
     setErrorMessage('');
     login('test@test.ca', 'password')
-      .then((res) => {
-        setToken(res.auth_token);
+      .then(async (res) => {
+        await setToken(res.auth_token);
         navigation.navigate('Home');
       })
       .catch((err) => setErrorMessage(err.message));
@@ -537,12 +537,12 @@ As for token setting, in `api/mock.js`, we can import the right method:
 import { getToken } from './token';
 ```
 
-And then use it:
+And then use it (note the new check for token correctness):
 ```js
-export const getUsers = (shouldSucceed = true) => {
-  const token = getToken();
+export const getUsers = async (shouldSucceed = true) => {
+  const token = await getToken();
 
-  if (!shouldSucceed) {
+  if (token !== 'successful_fake_token') {
     return mockFailure({ error: 401, message: 'Invalid Request' });
   }
 
@@ -565,8 +565,8 @@ One last piece of the puzzle. When the user logs out, we should delete the token
 
 Inside `HomeScreen`:
 ```jsx
-  logOut = () => {
-    setToken(null);
+  logOut = async () => {
+    await setToken('');
     this.props.navigation.navigate('Login');
   };
 
@@ -586,3 +586,9 @@ Inside `HomeScreen`:
     );
   }
 ```
+
+### HomeScreen is the best screen
+
+Now that we have a proper login flow, we should take the user straight to the HomeScreen when they open the app. Then, if the `getUsers` request fails due to an expired token, they'll be taken to log in again.
+
+Inside `App.js`, set the `initialRouteName` to 'Home'. Reload your app, and you should see the HomeScreen. If you're logged in, the users will load. If you're not (after previously clicked 'Log out', then reloading the app), you'll be taken to the login screen.
