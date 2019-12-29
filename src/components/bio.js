@@ -37,7 +37,7 @@ function Bio() {
               }}
             />
             <p>
-              Hi, I'm <strong>{author}</strong>. I'm a software developer/teacher who mostly writes about React and JavaScript.
+              Hi, I'm <strong>{author}</strong>. I'm a developer/teacher who writes about React, Rails, and JavaScript.
               {` `}
               <a href={`https://twitter.com/${social.twitter}`}>
                 Follow me on Twitter.
