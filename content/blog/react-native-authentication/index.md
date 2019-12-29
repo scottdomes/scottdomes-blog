@@ -4,6 +4,8 @@ date: "2019-12-28T22:12:03.284Z"
 description: Learn how to build up an onboarding and login flow with React Native
 ---
 
+![](./banner.png)
+
 ## What are we doing?
 
 Every app you build will need a login/signup funnel. It's one of the most basic building blocks of a modern app. Let's learn how to do it the fast and easy way using React Native.
