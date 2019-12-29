@@ -592,3 +592,38 @@ Inside `HomeScreen`:
 Now that we have a proper login flow, we should take the user straight to the HomeScreen when they open the app. Then, if the `getUsers` request fails due to an expired token, they'll be taken to log in again.
 
 Inside `App.js`, set the `initialRouteName` to 'Home'. Reload your app, and you should see the HomeScreen. If you're logged in, the users will load. If you're not (after previously clicked 'Log out', then reloading the app), you'll be taken to the login screen.
+
+### A subtle bug
+
+Perhaps without noticing, we've now introduced a problem. Try the following flow:
+1. Load the app, then click 'Log out'
+2. Reload the app. You'll be taken the LoginScreen.
+3. Log in again.
+
+Notice what happens: the users don't load! That's because we're relying on `componentDidMount`, and the component has _already mounted_.
+
+Here's what we actually want: every time the user navigates to the `HomeScreen`, if the users have not been loaded, we should load them.
+
+To do so, we need to subscribe to an event in the `react-navigation` lifecyle: the `didFocus` event, indicating the user has just arrived back at this screen. 
+
+[Read more about this event + listener here.](https://reactnavigation.org/docs/en/navigation-prop.html#addlistener-subscribe-to-updates-to-navigation-lifecycle)
+
+Fortunately, the modification is an easy one:
+```jsx
+  componentDidMount() {
+    this.didFocusSubscription = this.props.navigation.addListener(
+      'didFocus',
+      () => {
+        if (!this.state.hasLoadedUsers) {
+          this.loadUsers();
+        }
+      },
+    );
+  }
+
+  componentWillUnmount() {
+    this.didFocusSubscription.remove();
+  }
+```
+
+We're still using `componentDidMount`, but now using it to register a subscription to the navigation event. Try the following flow above, and see how loading the users now works! NICE.
