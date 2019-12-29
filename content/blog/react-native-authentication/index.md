@@ -210,7 +210,7 @@ export const login = (email, password, shouldSucceed = true) => {
   console.log(email, password);
 
   if (!shouldSucceed) {
-    return mockFailure({ error: 'Something went wrong!' });
+    return mockFailure({ error: 500, message: 'Something went wrong!' });
   }
 
   return mockSuccess({ auth_token: 'successful_fake_token' });
@@ -229,7 +229,7 @@ export const createAccount = (email, password, shouldSucceed = true) => {
   console.log(email, password);
 
   if (!shouldSucceed) {
-    return mockFailure({ error: 'Something went wrong!' });
+    return mockFailure({ error: 500, message: 'Something went wrong!' });
   }
 
   return mockSuccess({ auth_token: 'successful_fake_token' });
@@ -244,7 +244,7 @@ export const getUsers = (shouldSucceed = true) => {
   const token = getAuthenticationToken();
 
   if (!shouldSucceed) {
-    return mockFailure({ error: 'Invalid Request' });
+    return mockFailure({ error: 401, message: 'Invalid Request' });
   }
 
   return mockSuccess({
@@ -279,7 +279,7 @@ const LoginScreen = ({ navigation }) => {
       .then(() => {
         navigation.navigate('Home');
       })
-      .catch((err) => console.log('error:', err));
+      .catch((err) => console.log('error:', err.message));
   };
 
   return (
@@ -313,7 +313,7 @@ const CreateAccount = ({ navigation }) => {
       .then((val) => {
         navigation.navigate('Home');
       })
-      .catch((err) => console.log('error:', err));
+      .catch((err) => console.log('error:', err.message));
   };
 
   return (
@@ -347,7 +347,7 @@ const LoginScreen = ({ navigation }) => {
       .then(() => {
         navigation.navigate('Home');
       })
-      .catch((res) => setErrorMessage(res.error));
+      .catch((err) => setErrorMessage(err.message));
   };
 
   return (
@@ -371,5 +371,65 @@ When the request fails, the error mesage should appear below the buttons.
 You can copy this code for `CreateAccountScreen`.
 (Some may point out that these two screens are very similar and could share code. We'll fix this in the future!)
 
+### Loading users
 
+As mentioned above, we want to load a list of existing users on our `HomeScreen`. If that request fails with a `401` error, the user's session has expired, and we want to redirect them to the `LoginScreen`.
 
+To do so, we're going to refactor `HomeScreen` to be a class component using a `componentDidMount` [lifecycle method](https://scottdomes.com/react-lifecycle-methods/).
+
+```jsx
+import React from 'react';
+import { View, Text, Button } from 'react-native';
+import { getUsers } from '../api/mock';
+
+export default class HomeScreen extends React.Component {
+  state = { users: [], hasLoadedUsers: false, userLoadingErrorMessage: '' };
+
+  loadUsers() {
+    this.setState({ hasLoadedUsers: false, userLoadingErrorMessage: '' });
+    getUsers()
+      .then((res) =>
+        this.setState({
+          hasLoadedUsers: true,
+          users: res.users,
+        }),
+      )
+      .catch(this.handleUserLoadingError);
+  }
+
+  handleUserLoadingError = (res) => {
+    if (res.error === 401) {
+      this.props.navigation.navigate('Login');
+    } else {
+      this.setState({
+        hasLoadedUsers: false,
+        userLoadingErrorMessage: res.message,
+      });
+    }
+  }
+
+  componentDidMount() {
+    this.loadUsers();
+  }
+
+  render() {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>HomeScreen</Text>
+        {this.state.users.map((user) => (
+          <Text key={user.email}>{user.email}</Text>
+        ))}
+        <Button title="Log out" onPress={() => this.props.navigation.navigate('Login')} />
+      </View>
+    );
+  }
+}
+```
+
+There's a lot going on here, so let's unpack it:
+1. When we first hit the HomeScreen, we try load the list of users.
+2. If the request succeeds, we display a list of their emails.
+3. If the request fails, and the error code is 401, we are redirected back to the login screen.
+4. If the request fails with another code, an error message is displayed.
+
+Try experimenting with the various results listed above. You can pass `false` to `getUsers` to make the request fail, and change the returned error code in `api/mock.js` to see what happens.
