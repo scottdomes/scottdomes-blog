@@ -433,3 +433,60 @@ There's a lot going on here, so let's unpack it:
 4. If the request fails with another code, an error message is displayed.
 
 Try experimenting with the various results listed above. You can pass `false` to `getUsers` to make the request fail, and change the returned error code in `api/mock.js` to see what happens.
+
+We've now successfully mocked the login flow for our app. Now we start making it more real. First step: start _really_ using an authentication token.
+
+## Storing the auth token
+
+With our final app, our authentication flow will go like so:
+
+1. Create an account or log in, and get a token back from the API.
+2. Save that token to device storage.
+3. Include that token in every request (e.g. to `getUsers`).
+4. If the API tells us the token is invalid (if it has expired), redirect back to the login screen.
+
+Most of the above is in place with our mock API, _except_ for storing the token on the device. Let's do that now.
+
+### Token saving
+
+Create a new file in `api/` called `token.js`. This file is where we'll store methods for getting and saving the token.
+
+Luckily, accessing device storage is very easy with React Native, using the `async-storage` package. You can [read more about it here](https://github.com/react-native-community/async-storage).
+
+Note that `async-storage` isn't particulary secure, so don't use it for important information. See [this blog post](https://randycoulman.com/blog/2017/07/25/secure-storage-in-react-native/) for an overview of more secure storage options.
+
+To get started with the package, install and link it:
+```bash
+yarn add @react-native-community/async-storage
+cd ios/
+pod install
+cd ..
+```
+
+Here's what our `token.js` should look like:
+
+```js
+import AsyncStorage from '@react-native-community/async-storage';
+
+export const getToken = async () => {
+  try {
+    const value = await AsyncStorage.getItem('@auth_token');
+    if (value !== null) {
+      return value;
+    }
+  } catch (e) {
+    return null;
+  }
+};
+
+export const setToken = async (token) => {
+  try {
+    await AsyncStorage.setItem('@auth_token', token);
+  } catch (e) {
+    return null;
+  }
+};
+```
+
+We add a getter and setter for `@auth_token`, along with some very basic error handling. Note that if the token is not get or set properly, the effect will be the user being redirected to the login screen on their next failed request.
+
