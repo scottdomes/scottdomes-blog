@@ -156,7 +156,6 @@ Here's what we want to return from every single request:
 ```js
 const formattedResult = {
   status: result.status, // The HTTP code e.g. 404
-  message: result.message, // Any error message
   ok: result.ok, // Boolean value as to whether the request succeeded
   data: await res.json() // Parsed JSON of the actual data. We only want this if the request succeeds
 }
@@ -165,10 +164,9 @@ const formattedResult = {
 So with the above in mind, let's introduce a new method to `src/api/fetch.js`:
 
 ```js
-const formatResults = async (result) => {
+const formatResult = async (result) => {
   const formatted = {
     status: result.status,
-    message: result.message,
     ok: result.ok,
   };
 
@@ -191,7 +189,7 @@ export const post = async (destination, body) => {
     body: JSON.stringify(body),
   });
 
-  const formattedResult = await resultFormatter(result);
+  const formattedResult = await formatResult(result);
   return formattedResult;
 };
 ```
@@ -348,4 +346,118 @@ We use a `getInitialState` function to construct an object with an empty string 
 
 Since it's impossible for a user to update multiple fields at once, we don't have to worry about race conditions here.
 
-You can test this is working by `console.log(values)` right before the `return`, and then typing some content.
+You can test this is working by `console.log(values)` right before the `return`, and then typing some content into our fields.
+
+## Submitting
+
+First let's create a 'submit' button for our form, and then we'll talk about what happens when it's clicked.
+
+The button in `Form.js`:
+```jsx
+  return (
+    <View>
+      {fieldKeys.map((key) => {
+        const field = fields[key];
+        return (
+          <View key={key}>
+            <Text>{field.label}</Text>
+            <TextInput
+              {...field.inputProps}
+              value={values[key]}
+              onChangeText={(text) => onChangeValue(key, text)}
+            />
+          </View>
+        );
+      })}
+      <Button title={buttonText} />
+    </View>
+  );
+```
+
+This requires a new `buttonText` prop for `Form`. Create that prop and then pass in "Submit" from `LoginScreen`.
+
+The result:
+![](./submitbutton.png)
+
+Great, but it doesn't _do_ anything. So what do we want to happen?
+
+Well, we need to send the values for the `email` and `password` fields to the back-end. This is specific to _this_ form, so we need the submit action to be a custom prop passed to `Form`.
+
+In `LoginScreen`:
+```jsx
+import React from 'react';
+import Form from '../forms/Form';
+import { login } from '../api/authentication';
+
+const LoginScreen = ({ navigation }) => {
+  return (
+    <Form
+      action={login}
+      buttonText="Submit"
+      fields={{
+        email: {
+          label: 'Email',
+          inputProps: {
+            keyboardType: 'email-address',
+          },
+        },
+        password: {
+          label: 'Password',
+          inputProps: {
+            secureTextEntry: true,
+          },
+        },
+      }}
+    />
+  );
+};
+
+export default LoginScreen;
+```
+
+We pass a new `action` prop to decide what to happen. Now, let's make it work:
+```jsx
+const Form = ({ fields, buttonText, action }) => {
+  // ... same code
+
+  const getValues = () => {
+    return fieldKeys.sort().map((key) => values[key]);
+  };
+
+  const submit = async () => {
+    const values = getValues();
+    const result = await action(...values);
+    console.log(result);
+  };
+
+  // ... same code
+  // But add the onPress:
+        <Button title={buttonText} onPress={submit} />
+  // ... same code
+
+};
+```
+
+First, we create a `submit` function and grab the values from state. Then we pass those values to the `action` prop, spreading the array as arguments. Note that `getValues` calls `sort` on the keys, which means the values will be passed to the action in alphabetical order. This makes our output easier to predict.
+
+Here's our old `login` method we made before:
+```js
+export const login = (email, password) => {
+  return post('/users/login', {
+    user: { email, password },
+  });
+};
+```
+
+Based on our new code, this should just work. Our `console.log` should spit out this result for a successful login:
+```js
+{status: 200, ok: true, data: {…}}
+```
+
+For a wrong email/password combination:
+```js
+{status: 401, ok: false}
+```
+
+Great work!
+
