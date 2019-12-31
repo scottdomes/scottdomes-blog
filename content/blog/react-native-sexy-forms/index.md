@@ -298,3 +298,54 @@ We iterate over the `keys` of the `fields` object, and use that to create a `Tex
 
 This should yield the following result:
 ![](./basicfields.png)
+
+## Controlling values
+
+Our inputs are currently uncontrolled. When text is entered and their values change, we don't keep track of it. But we need to.
+
+We're going to dynamically create a `values` object and store that in the state of `Form`. Here's what that looks like, using React hooks:
+```jsx
+import React, { useState } from 'react';
+import { Text, TextInput, View } from 'react-native';
+
+const getInitialState = (fieldKeys) => {
+  const state = {};
+  fieldKeys.forEach((key) => {
+    state[key] = '';
+  });
+
+  return state;
+};
+
+const Form = ({ fields }) => {
+  const fieldKeys = Object.keys(fields);
+  const [values, setValues] = useState(getInitialState(fieldKeys));
+
+  const onChangeValue = (key, value) => {
+    const newState = { ...values, [key]: value };
+    setValues(newState);
+  };
+
+  return fieldKeys.map((key) => {
+    const field = fields[key];
+    return (
+      <View key={key}>
+        <Text>{field.label}</Text>
+        <TextInput
+          {...field.inputProps}
+          value={values[key]}
+          onChangeText={(text) => onChangeValue(key, text)}
+        />
+      </View>
+    );
+  });
+};
+
+export default Form;
+```
+
+We use a `getInitialState` function to construct an object with an empty string assigned to each field key. We then pass a `value` and `onChangeText` prop to `TextInput`, which calls a method that updates the entire state object.
+
+Since it's impossible for a user to update multiple fields at once, we don't have to worry about race conditions here.
+
+You can test this is working by `console.log(values)` right before the `return`, and then typing some content.
