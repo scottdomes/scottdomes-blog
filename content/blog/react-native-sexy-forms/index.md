@@ -119,3 +119,81 @@ If there's an error, it returns a message. Otherwise it returns `undefined`.
 We also split things like `secureTextEntry` into a `inputProps` key to designate that they are props that will be passed directly to the underlying input component.
 
 Okay, so that's the plan! Our challenge here is to A) make it work and B) make it pretty.
+
+## Getting started
+
+For the purposes of this tutorial, I'm going to assume you followed [my initial guide for React Native authentication](https://scottdomes.com/react-native-authentication/).
+
+If you haven't and can't be bothered to, the gist is that we have three main screens: HomeScreen, LoginScreen, and CreateAccountScreen. The latter two share an EmailForm component. We also have a `fetch` utility for communicating with our back-end.
+
+The first thing we're going to do is improve that utility.
+
+## Formatting request results
+
+In our first tutorial, we built fetch methods like so:
+```js
+export const post = async (destination, body) => {
+  const headers = await getHeaders();
+
+  const result = await fetch(`${API_URL}${destination}`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(body),
+  });
+
+  if (result.ok) {
+    return await result.json();
+  }
+  throw { error: result.status };
+};
+```
+
+Basically, if the request was good, we return the data. If it wasn't, we throw an error.
+
+While working on this tutorial, I decided I didn't love that approach. Throwing errors is a bit strange and unpredictable for the engineers using these methods. I decided I'd rather return a uniform result object with all the relevant info.
+
+Here's what we want to return from every single request:
+```js
+const formattedResult = {
+  status: result.status, // The HTTP code e.g. 404
+  message: result.message, // Any error message
+  ok: result.ok, // Boolean value as to whether the request succeeded
+  data: await res.json() // Parsed JSON of the actual data. We only want this if the request succeeds
+}
+```
+
+So with the above in mind, let's introduce a new method to `src/api/fetch.js`:
+
+```js
+const formatResults = async (result) => {
+  const formatted = {
+    status: result.status,
+    message: result.message,
+    ok: result.ok,
+  };
+
+  if (result.ok) {
+    formatted.data = await result.json();
+  }
+
+  return formatted;
+};
+```
+
+This is a nice clean, asynchronous method we can now invoke from our `get` and `post` methods:
+```js
+export const post = async (destination, body) => {
+  const headers = await getHeaders();
+
+  const result = await fetch(`${API_URL}${destination}`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(body),
+  });
+
+  const formattedResult = await resultFormatter(result);
+  return formattedResult;
+};
+```
+
+Is this essential? No. Will it make our lives easier down the line? Yes.
