@@ -197,3 +197,40 @@ export const post = async (destination, body) => {
 ```
 
 Is this essential? No. Will it make our lives easier down the line? Yes.
+
+## Setting up our form
+
+You know that nice, lovely EmailForm component we made last time? Delete it.
+
+Yep, we're starting from scratch. Delete it and make a file in `src/forms/` called `Form.js`.
+
+Here's what we can start with:
+```jsx
+import React from 'react';
+import { Text } from 'react-native';
+
+const Form = () => {
+  return <Text>I am FORM</Text>;
+};
+
+export default Form;
+```
+
+High-end engineering, this.
+
+Rewrite `LoginScreen` and `CreateAccountScreen` to look like so:
+```jsx
+import React from 'react';
+import Form from '../forms/Form';
+
+const CreateAccount = ({ navigation }) => {
+  return <Form />;
+};
+
+export default CreateAccount;
+```
+
+Your app should now look like so:
+![](./iamform.png)
+
+Great start?
