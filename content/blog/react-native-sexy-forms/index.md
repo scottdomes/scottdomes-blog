@@ -593,3 +593,162 @@ const Form = ({ fields, buttonText, action, afterSubmit }) => {
 
 We create an `errorMessage` hook and set it to the error message in our catch. Then, we display it to the user. The result, after a failed login:
 ![](./failedlogin.png)
+
+## Validation
+
+You may notice in the above screenshots that I submitted a blank email + password. This is obviously an invalid login, and it is not worth making a request to the back-end to find that out.
+
+We need some front-end validation to check our fields before we submit them. Let's create some functions to do so in a new file, `src/forms/validation.js`:
+```js
+export const validateContent = (text) => {
+  if (!text) {
+    return "Can't be blank";
+  }
+};
+
+export const validateLength = (text) => {
+  if (text && text.length < 4) {
+    return 'Must be 4 characters or more.';
+  }
+};
+```
+
+These two functions are designed to be called with the text of the field. If the text is not correct, they return a human-readable error. If the text is fine, they return `undefined`.
+
+Let's create the `validators` field we came up with earlier, in `LoginScreen.js`:
+```jsx
+import React from 'react';
+import Form from '../forms/Form';
+import { login } from '../api/authentication';
+import { setToken } from '../api/token';
+import { validateContent, validateLength } from '../forms/validation';
+
+const LoginScreen = ({ navigation }) => {
+  // Old code
+
+  return (
+    <Form
+      action={login}
+      afterSubmit={handleResult}
+      buttonText="Submit"
+      fields={{
+        email: {
+          label: 'Email',
+          validators: [validateContent],
+          inputProps: {
+            keyboardType: 'email-address',
+          },
+        },
+        password: {
+          label: 'Password',
+          validators: [validateContent, validateLength],
+          inputProps: {
+            secureTextEntry: true,
+          },
+        },
+      }}
+    />
+  );
+};
+
+export default LoginScreen;
+```
+
+Each field now has a `validators` array that describes what we want to check for. For the email, we just want some text entered. For the password, we want text entered, and for it to be a specific length. In the latter case, these two are probably redundant, but I wanted to show an example of multiple validators, so bear with me.
+
+The tricky thing here is that we need specific errors for each field. But our `Form.js` is getting unwieldy, so let's split this into a new component. In `src/forms/`, make a component called `FieldValidator.js`.
+```jsx
+const validateFields = (fields, values) => {
+  return {};
+};
+
+const FieldValidator = ({ values, fields, children }) => {
+  const errors = validateFields(fields, values);
+
+  return children(errors);
+};
+
+export default FieldValidator;
+```
+
+If you're new to React/React Native, this must seem a little strange. This pattern is called 'Function as Child Component' and you can [read more here](https://codedaily.io/tutorials/6/Using-Functions-as-Children-and-Render-Props-in-React-Components). Be aware that [some people hate this pattern](https://americanexpress.io/faccs-are-an-antipattern/). But I love it. I think it yields readable, resueable components. So if you're a hater, just try to, uh, cope.
+
+Anyway, so what happens here is that `FieldValidator` takes our `fields` and `values`, and will (once we implement it), run the validators for each field and then spit it out.
+
+The full implementation:
+```jsx
+const validateField = (validators, value) => {
+  let error = '';
+  validators.forEach((validator) => {
+    const validationError = validator(value);
+    if (validationError) {
+      error = validationError;
+    }
+  });
+  return error;
+};
+
+const validateFields = (fields, values) => {
+  const errors = {};
+  const fieldKeys = Object.keys(fields);
+  fieldKeys.forEach((key) => {
+    const field = fields[key];
+    const validators = field.validators;
+    const value = values[key];
+    if (validators && validators.length > 0) {
+      const error = validateField(validators, value);
+      if (error) {
+        errors[key] = error;
+      }
+    }
+  });
+
+  return errors;
+};
+
+const FieldValidator = ({ values, fields, children }) => {
+  const errors = validateFields(fields, values);
+
+  return children(errors);
+};
+
+export default FieldValidator;
+
+```
+
+And in `Form.js`:
+```jsx
+  return (
+    <View>
+      <Text>{errorMessage}</Text>
+      <FieldValidator fields={fields} values={values}>
+        {(errors) =>
+          fieldKeys.map((key) => {
+            const field = fields[key];
+            const error = errors[key]
+            return (
+              <View key={key}>
+                <Text>{field.label}</Text>
+                <TextInput
+                  {...field.inputProps}
+                  value={values[key]}
+                  onChangeText={(text) => onChangeValue(key, text)}
+                />
+                <Text>{error}</Text>
+              </View>
+            );
+          })
+        }
+      </FieldValidator>
+      <Button title={buttonText} onPress={submit} />
+    </View>
+  );
+```
+
+`FieldValidator` wraps our inputs, and we can use it to display an error under each field.
+
+If you try this out, you see you now get errors in real time:
+![](./validation.gif)
+
+This is not ideal. It's annoying for the user to be constantly reminded that they're doing it wrong, as they're typing. We're going to fix this, but for now... we have validation! Great work.
+
