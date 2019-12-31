@@ -234,3 +234,67 @@ Your app should now look like so:
 ![](./iamform.png)
 
 Great start?
+
+One more logistical thing: let's make the login screen the first screen we land on for development purposes. In `App.js`, change the `initialRouteName` to `'Login'`.
+
+## Form options
+
+Since we already have an idea of the props structure of our form, let's fill that in, then make it work.
+
+In `LoginScreen`:
+```jsx
+import React from 'react';
+import Form from '../forms/Form';
+
+const LoginScreen = ({ navigation }) => {
+  return (
+    <Form
+      fields={{
+        email: {
+          label: 'Email',
+          inputProps: {
+            keyboardType: 'email-address',
+          },
+        },
+        password: {
+          label: 'Password',
+          inputProps: {
+            secureTextEntry: true,
+          },
+        },
+      }}
+    />
+  );
+};
+
+export default LoginScreen;
+```
+
+Our login form will have an `email` and a `password` field. The email field will trigger the user's phone's email keyboard, and the password field will have obfuscated text entry. The only thing missing here is the validation, which we'll leave for later.
+
+In our `Form` component, we now need to create an input for each field:
+```jsx
+import React from 'react';
+import { Text, TextInput, View } from 'react-native';
+
+const Form = ({ fields }) => {
+  const fieldKeys = Object.keys(fields);
+
+  return fieldKeys.map((key) => {
+    const field = fields[key];
+    return (
+      <View key={key}>
+        <Text>{field.label}</Text>
+        <TextInput {...field.inputProps} />
+      </View>
+    );
+  });
+};
+
+export default Form;
+```
+
+We iterate over the `keys` of the `fields` object, and use that to create a `TextInput` and label for each one. For the `inputProps`, we just spread them over the input component. Note that this approach is not very tightly controlled: it's up to the engineer using `Form` to implement everything correctly.
+
+This should yield the following result:
+![](./basicfields.png)
