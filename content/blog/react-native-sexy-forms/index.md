@@ -656,28 +656,9 @@ export default LoginScreen;
 
 Each field now has a `validators` array that describes what we want to check for. For the email, we just want some text entered. For the password, we want text entered, and for it to be a specific length. In the latter case, these two are probably redundant, but I wanted to show an example of multiple validators, so bear with me.
 
-The tricky thing here is that we need specific errors for each field. But our `Form.js` is getting unwieldy, so let's split this into a new component. In `src/forms/`, make a component called `FieldValidator.js`.
-```jsx
-const validateFields = (fields, values) => {
-  return {};
-};
-
-const FieldValidator = ({ values, fields, children }) => {
-  const errors = validateFields(fields, values);
-
-  return children(errors);
-};
-
-export default FieldValidator;
-```
-
-If you're new to React/React Native, this must seem a little strange. This pattern is called 'Function as Child Component' and you can [read more here](https://codedaily.io/tutorials/6/Using-Functions-as-Children-and-Render-Props-in-React-Components). Be aware that [some people hate this pattern](https://americanexpress.io/faccs-are-an-antipattern/). But I love it. I think it yields readable, resueable components. So if you're a hater, just try to, uh, cope.
-
-Anyway, so what happens here is that `FieldValidator` takes our `fields` and `values`, and will (once we implement it), run the validators for each field and then spit it out.
-
-The full implementation:
-```jsx
-const validateField = (validators, value) => {
+We're going to introduce several new methods to handle validation. In `src/forms/validation.js`, make a function called `validateField`:
+```js
+export const validateField = (validators, value) => {
   let error = '';
   validators.forEach((validator) => {
     const validationError = validator(value);
@@ -687,8 +668,12 @@ const validateField = (validators, value) => {
   });
   return error;
 };
+```
+This function takes an array of validators, and the value of a field. It runs the value against the validators and returns the last error found.
 
-const validateFields = (fields, values) => {
+Another function called `validateFields`:
+```js
+export const validateFields = (fields, values) => {
   const errors = {};
   const fieldKeys = Object.keys(fields);
   fieldKeys.forEach((key) => {
@@ -697,6 +682,7 @@ const validateFields = (fields, values) => {
     const value = values[key];
     if (validators && validators.length > 0) {
       const error = validateField(validators, value);
+
       if (error) {
         errors[key] = error;
       }
@@ -705,50 +691,77 @@ const validateFields = (fields, values) => {
 
   return errors;
 };
-
-const FieldValidator = ({ values, fields, children }) => {
-  const errors = validateFields(fields, values);
-
-  return children(errors);
-};
-
-export default FieldValidator;
-
 ```
 
-And in `Form.js`:
+This one is more complex. It takes our `fields` object and our `values` object and does the unsexy work of calling `validateField` for each one. It will give us back an `errors` object that is constructed the same way as `fields` or `values`: with the fieldName as the key, and the error message as the value.
+
+One more, `hasValidationError`:
+```js
+export const hasValidationError = (errors) => {
+  return Object.values(errors).find((error) => error.length > 0);
+};
+```
+
+This one checks our new `errors` object and sees if any of the errors are populated. If they are, we can then cancel the back-end request.
+
+Okay, let's hope back to `Form.js` and wire it up.
+
+First, let's introduce an `validationErrors` object to state:
 ```jsx
-  return (
-    <View>
-      <Text>{errorMessage}</Text>
-      <FieldValidator fields={fields} values={values}>
-        {(errors) =>
-          fieldKeys.map((key) => {
-            const field = fields[key];
-            const error = errors[key]
-            return (
-              <View key={key}>
-                <Text>{field.label}</Text>
-                <TextInput
-                  {...field.inputProps}
-                  value={values[key]}
-                  onChangeText={(text) => onChangeValue(key, text)}
-                />
-                <Text>{error}</Text>
-              </View>
-            );
-          })
-        }
-      </FieldValidator>
-      <Button title={buttonText} onPress={submit} />
-    </View>
+const Form = ({ fields, buttonText, action, afterSubmit }) => {
+  const fieldKeys = Object.keys(fields);
+  const [values, setValues] = useState(getInitialState(fieldKeys));
+  const [errorMessage, setErrorMessage] = useState('');
+  const [validationErrors, setValidationErrors] = useState(
+    getInitialState(fieldKeys),
   );
 ```
 
-`FieldValidator` wraps our inputs, and we can use it to display an error under each field.
+Import both `hasValidationError` and `validateFields`, and we can add them to our `submit` function:
+```js
+const submit = async () => {
+  setErrorMessage('');
+  setValidationErrors(getInitialState(fieldKeys));
 
-If you try this out, you see you now get errors in real time:
-![](./validation.gif)
+  const errors = validateFields(fields, values);
+  if (hasValidationError(errors)) {
+    console.log(errors);
+    return setValidationErrors(errors);
+  }
+  const result = await action(...getValues());
+  try {
+    await afterSubmit(result);
+  } catch (e) {
+    setErrorMessage(e.message);
+  }
+};
+```
 
-This is not ideal. It's annoying for the user to be constantly reminded that they're doing it wrong, as they're typing. We're going to fix this, but for now... we have validation! Great work.
+These function has a new flow:
+1. Erase any existing validation errors or general error messages.
+2. Validate the fields for new errors.
+3. If a validation error exists, we bow out at this point.
+4. If there are no errors, submit the request.
+
+Last piece: in our `map`, let's add the error message below the field:
+```jsx
+{fieldKeys.map((key) => {
+  const field = fields[key];
+  const fieldError = validationErrors[key];
+  return (
+    <View key={key}>
+      <Text>{field.label}</Text>
+      <TextInput
+        {...field.inputProps}
+        value={values[key]}
+        onChangeText={(text) => onChangeValue(key, text)}
+      />
+      <Text>{fieldError}</Text>
+    </View>
+  );
+})}
+```
+
+The result:
+![](./validationerror.png)
 
