@@ -1047,3 +1047,77 @@ const SubmitButton = ({ title, onPress }) => {
 
 Here's the result again:
 ![](./buttonanimation.gif)
+
+## Fading the form
+
+When our form is being submitted, we want to fade the opacity a bit, as a visual way of letting the user know things are happening.
+
+Again, we'll use an `Animated.Value`, this time in `Form.js`:
+```jsx
+const Form = ({ fields, buttonText, action, afterSubmit }) => {
+  const fieldKeys = Object.keys(fields);
+  const [values, setValues] = useState(getInitialState(fieldKeys));
+  const [errorMessage, setErrorMessage] = useState('');
+  const [validationErrors, setValidationErrors] = useState(
+    getInitialState(fieldKeys),
+  );
+  const [opacity] = useState(new Animated.Value(1));
+```
+
+We only want to fade the fields (not the button) so let's add a new wrapping `Animated.View`:
+```jsx
+  return (
+    <View style={styles.container}>
+      <Text style={styles.error}>{errorMessage}</Text>
+      <Animated.View style={{ opacity }}>
+        {fieldKeys.map((key) => {
+          return (
+            <Field
+              key={key}
+              fieldName={key}
+              field={fields[key]}
+              error={validationErrors[key]}
+              onChangeText={onChangeValue}
+              value={values[key]}
+            />
+          );
+        })}
+      </Animated.View>
+      <SubmitButton title={buttonText} onPress={submit} />
+    </View>
+  );
+};
+```
+
+And we'll add new functions and expand our `submit` function:
+```js
+  const fadeOut = () =>
+    Animated.timing(opacity, { toValue: 0.2, duration: 200 }).start();
+
+  const fadeIn = () =>
+    Animated.timing(opacity, { toValue: 1, duration: 200 }).start();
+
+  const submit = async () => {
+    setErrorMessage('');
+    setValidationErrors(getInitialState(fieldKeys));
+
+    const errors = validateFields(fields, values);
+    if (hasValidationError(errors)) {
+      return setValidationErrors(errors);
+    }
+
+    fadeOut();
+    const result = await action(...getValues());
+    fadeIn();
+    try {
+      await afterSubmit(result);
+    } catch (e) {
+      setErrorMessage(e.message);
+    }
+  };
+```
+
+The result:
+![](./fadeanimation.gif)
+
+
