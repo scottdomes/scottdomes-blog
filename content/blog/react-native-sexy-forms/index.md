@@ -1342,3 +1342,8 @@ And the result:
 
 When a specific field has a validation error, we want to briefly shake it to bring the user's attention to it.
 
+We want to show the shake:
+1. When the form was previously submitting, but now is not.
+2. When the field previously has an error.
+
+To do #1, we need to bring in [a lifecycle method](https://scottdomes.com/react-lifecycle-methods/).
