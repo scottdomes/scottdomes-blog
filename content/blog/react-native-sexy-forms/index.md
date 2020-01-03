@@ -862,6 +862,7 @@ const styles = StyleSheet.create({
   },
   error: {
     marginBottom: 20,
+    height: 17.5,
   },
 });
 ```
@@ -926,7 +927,7 @@ import { TouchableWithoutFeedback, View, Text, StyleSheet } from 'react-native';
 
 const SubmitButton = ({ title, onPress }) => {
   return (
-    <TouchableWithoutFeedback onPressIn={onPress}>
+    <TouchableWithoutFeedback onPress={onPress}>
       <View style={styles.container}>
         <Text style={styles.text}>{title}</Text>
       </View>
@@ -969,6 +970,80 @@ It looks nice, but it gives no indication of being clicked when the user presses
 
 ## Button animation
 
+Our animation is going to be quite simple: when the button is pressed, the button will move down and get smaller. Here's the final effect:
+![](./buttonanimation.gif)
 
+We're going to use the `Animated` library that comes with React Native to achieve this effect. We'll start with two animated values: `offset` and `scale`. Offset will control the button's position, scale its size.
+```jsx
+const SubmitButton = ({ title, onPress }) => {
+  const [offset] = useState(new Animated.Value(1));
+  const [scale] = useState(new Animated.Value(1));
+```
 
+Both values start at `1`, the normal scale and position.
 
+From there, we construct a `transform` style array, and apply it to our container:
+```jsx
+const SubmitButton = ({ title, onPress }) => {
+  const [offset] = useState(new Animated.Value(1));
+  const [scale] = useState(new Animated.Value(1));
+
+  const transform = [
+    { translateY: offset },
+    { scaleY: scale },
+    { scaleX: scale },
+  ];
+
+  return (
+    <TouchableWithoutFeedback onPress={onPress}>
+      <Animated.View style={{ transform, ...styles.container }}>
+        <Text style={styles.text}>{title}</Text>
+      </Animated.View>
+    </TouchableWithoutFeedback>
+  );
+};
+```
+
+Note the conversion of the `View` to an `Animated.View`. This is necessary for any elements that can be animated.
+
+Lastly, we make a new `handlePress` function:
+```jsx
+const SubmitButton = ({ title, onPress }) => {
+  const [offset] = useState(new Animated.Value(1));
+  const [scale] = useState(new Animated.Value(1));
+
+  const handlePress = async () => {
+    Animated.spring(offset, {
+      toValue: 5,
+    }).start();
+    Animated.spring(scale, {
+      toValue: 0.96,
+    }).start();
+
+    await onPress();
+    Animated.spring(offset, {
+      toValue: 0,
+    }).start();
+    Animated.spring(scale, {
+      toValue: 1,
+    }).start();
+  };
+
+  const transform = [
+    { translateY: offset },
+    { scaleY: scale },
+    { scaleX: scale },
+  ];
+
+  return (
+    <TouchableWithoutFeedback onPressIn={handlePress}>
+      <Animated.View style={{ transform, ...styles.container }}>
+        <Text style={styles.text}>{title}</Text>
+      </Animated.View>
+    </TouchableWithoutFeedback>
+  );
+};
+```
+
+Here's the result again:
+![](./buttonanimation.gif)
