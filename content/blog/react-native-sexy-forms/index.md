@@ -1293,3 +1293,52 @@ The effect:
 ![](./delayedanimation.gif)
 
 Note that `700` for the timeout is relatively arbitrary. It felt the best for me, as not too long but long enough to be graceful. Experiment with shorter and longer and see what you like.
+
+## Avoiding the keyboard
+
+If you toggle the software keyboard in your emulator (CMD+K on Mac), you'll see we have a little problem.
+
+![](./badkeyboard.png)
+
+Our user can't even submit the form!
+
+Fortunately, this is easy to fix in React Native. Swap out our container `View` in `Form.js` for a `KeyboardAvoidingView`:
+```jsx
+return (
+  <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+    <Text style={styles.error}>{errorMessage}</Text>
+    {isSubmitting && (
+      <View style={styles.activityIndicatorContainer}>
+        <ActivityIndicator size="large" color="#3F5EFB" />
+      </View>
+    )}
+    <Animated.View style={{ opacity }}>
+      {fieldKeys.map((key) => {
+        return (
+          <Field
+            key={key}
+            fieldName={key}
+            field={fields[key]}
+            error={validationErrors[key]}
+            onChangeText={onChangeValue}
+            value={values[key]}
+          />
+        );
+      })}
+    </Animated.View>
+    <SubmitButton
+      title={buttonText}
+      onPress={submit}
+      isSubmitting={isSubmitting}
+    />
+  </KeyboardAvoidingView>
+);
+```
+
+And the result:
+![](./goodkeyboard.gif)
+
+## Adding a shake animation on validation error
+
+When a specific field has a validation error, we want to briefly shake it to bring the user's attention to it.
+
