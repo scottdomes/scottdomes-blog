@@ -765,3 +765,31 @@ Last piece: in our `map`, let's add the error message below the field:
 The result:
 ![](./validationerror.png)
 
+## Clearing validation on change
+
+One small UX improvement we can make right away is to clear validation errors when the user types in the form. This is pretty easy to do:
+```jsx
+const onChangeValue = (key, value) => {
+  const newState = { ...values, [key]: value };
+  setValues(newState);
+
+  if (validationErrors[key]) {
+    const newErrors = { ...validationErrors, [key]: '' };
+    setValidationErrors(newErrors);
+  }
+};
+```
+
+If the field has an error on change, we erase it.
+
+We could get more sophisticated here, and run the validator to see if the error is fixed... but let's not go too far down the rabbit hole here.
+
+## Checkpoint
+
+We now have a fully working form with good user experience. But it is not, as the title of this post implies, particulary beautiful. Our next step will be to add some pizzazz.
+
+Here are our planned improvements:
+1. Introduce a colorful button with a press animation.
+2. Fade out the form slightly when it is submitting.
+3. Show an activity indicator on submission.
+4. Add a shake animation when a field has an error.
