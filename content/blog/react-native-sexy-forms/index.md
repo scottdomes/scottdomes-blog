@@ -789,7 +789,130 @@ We could get more sophisticated here, and run the validator to see if the error 
 We now have a fully working form with good user experience. But it is not, as the title of this post implies, particulary beautiful. Our next step will be to add some pizzazz.
 
 Here are our planned improvements:
-1. Introduce a colorful button with a press animation.
-2. Fade out the form slightly when it is submitting.
-3. Show an activity indicator on submission.
-4. Add a shake animation when a field has an error.
+1. Clean up the basic styles
+2. Introduce a colorful button with a press animation.
+3. Fade out the form slightly when it is submitting.
+4. Show an activity indicator on submission.
+5. Add a shake animation when a field has an error.
+
+## Splitting up components
+
+Before we start styling, let's break up our components a bit.
+
+Make a new component in `src/forms/` called `Field.js`:
+```jsx
+import React, { useState } from 'react';
+import { Text, TextInput, View, StyleSheet } from 'react-native';
+
+const Field = ({ fieldName, field, value, onChangeText, error }) => {
+  return (
+    <View>
+      <Text>{field.label}</Text>
+      <TextInput
+        {...field.inputProps}
+        value={value}
+        onChangeText={(text) => onChangeText(fieldName, text)}
+      />
+      <Text>{error}</Text>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({});
+
+export default Field;
+```
+
+Nothing new here, just some code extracted from `Form`. I also got a StyleSheet ready, since we'll be using that next.
+
+And in `Form.js`:
+```jsx
+return (
+  <View>
+    <Text>{errorMessage}</Text>
+    {fieldKeys.map((key) => {
+      return (
+        <Field
+          key={key}
+          fieldName={key}
+          field={fields[key]}
+          error={validationErrors[key]}
+          onChangeText={onChangeValue}
+          value={values[key]}
+        />
+      );
+    })}
+    <Button title={buttonText} onPress={submit} />
+  </View>
+);
+```
+
+Ensure everything is working as before.
+
+## Form styles
+
+Add a `StyleSheet` to `Form.js` with the following values:
+```js
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 15,
+  },
+  error: {
+    marginBottom: 20,
+  },
+});
+```
+
+Then to your outermost `View`, add the `style` prop: `<View style={styles.container}>`.
+Do the same for our general error message `Text`: `      <Text style={styles.error}>{errorMessage}</Text>`
+
+That will center and align our form. Let's hop back over to `Field.js` and add some styles there:
+```js
+const styles = StyleSheet.create({
+  input: {
+    height: 40,
+    width: 300,
+    paddingHorizontal: 5,
+    backgroundColor: 'white',
+    marginBottom: 5,
+  },
+  inputContainer: {
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+    elevation: 4,
+  },
+  error: { textAlign: 'center', height: 17.5 },
+});
+```
+
+Here's what the props look like:
+```jsx
+const Field = ({ fieldName, field, value, onChangeText, error }) => {
+  return (
+    <View style={styles.inputContainer}>
+      <Text>{field.label}</Text>
+      <TextInput
+        style={styles.input}
+        {...field.inputProps}
+        value={value}
+        onChangeText={(text) => onChangeText(fieldName, text)}
+      />
+      <Text style={styles.error}>{error}</Text>
+    </View>
+  );
+};
+```
+
+Notice that the `style` prop for the `TextInput` is placed before we spread the `inputProps`, which means consumers of this component could override our styling, if need be.
+
+All this should yield the following result:
+![](./styles1.png)
