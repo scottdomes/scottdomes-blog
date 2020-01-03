@@ -551,8 +551,8 @@ const Form = ({ fields, buttonText, action, afterSubmit }) => {
 
   const submit = async () => {
     const values = getValues();
-    const result = await action(...values);
     try {
+      const result = await action(...values);
       await afterSubmit(result)
     } catch(e) {
       console.log('error:', e)
@@ -574,8 +574,8 @@ const Form = ({ fields, buttonText, action, afterSubmit }) => {
 
   const submit = async () => {
     const values = getValues();
-    const result = await action(...values);
     try {
+      const result = await action(...values);
       await afterSubmit(result);
     } catch (e) {
       setErrorMessage(e.message);
@@ -728,8 +728,8 @@ const submit = async () => {
     console.log(errors);
     return setValidationErrors(errors);
   }
-  const result = await action(...getValues());
   try {
+    const result = await action(...getValues());
     await afterSubmit(result);
   } catch (e) {
     setErrorMessage(e.message);
@@ -1091,33 +1091,153 @@ We only want to fade the fields (not the button) so let's add a new wrapping `An
 
 And we'll add new functions and expand our `submit` function:
 ```js
-  const fadeOut = () =>
-    Animated.timing(opacity, { toValue: 0.2, duration: 200 }).start();
+const fadeOut = () =>
+  Animated.timing(opacity, { toValue: 0.2, duration: 200 }).start();
 
-  const fadeIn = () =>
-    Animated.timing(opacity, { toValue: 1, duration: 200 }).start();
+const fadeIn = () =>
+  Animated.timing(opacity, { toValue: 1, duration: 200 }).start();
 
-  const submit = async () => {
-    setErrorMessage('');
-    setValidationErrors(getInitialState(fieldKeys));
+const submit = async () => {
+  setErrorMessage('');
+  setValidationErrors(getInitialState(fieldKeys));
 
-    const errors = validateFields(fields, values);
-    if (hasValidationError(errors)) {
-      return setValidationErrors(errors);
-    }
+  const errors = validateFields(fields, values);
+  if (hasValidationError(errors)) {
+    return setValidationErrors(errors);
+  }
 
-    fadeOut();
+  fadeOut();
+  try {
     const result = await action(...getValues());
     fadeIn();
-    try {
-      await afterSubmit(result);
-    } catch (e) {
-      setErrorMessage(e.message);
-    }
-  };
+    await afterSubmit(result);
+  } catch (e) {
+    setErrorMessage(e.message);
+    fadeIn();
+  }
+};
 ```
 
 The result:
 ![](./fadeanimation.gif)
 
+## Adding activity indicators
 
+Let's add more visual feedback. React Native comes with an `ActivityIndicator` component that we can add to both our button and our form.
+
+For the form, we'll need a new `isSubmitting` state piece:
+```jsx
+const Form = ({ fields, buttonText, action, afterSubmit }) => {
+  const fieldKeys = Object.keys(fields);
+  const [values, setValues] = useState(getInitialState(fieldKeys));
+  const [errorMessage, setErrorMessage] = useState('');
+  const [validationErrors, setValidationErrors] = useState(
+    getInitialState(fieldKeys),
+  );
+  const [opacity] = useState(new Animated.Value(1));
+  const [isSubmitting, setSubmitting] = useState(false);
+```
+
+Add it to `submit`:
+```jsx
+const submit = async () => {
+  setSubmitting(true);
+  setErrorMessage('');
+  setValidationErrors(getInitialState(fieldKeys));
+
+  const errors = validateFields(fields, values);
+  if (hasValidationError(errors)) {
+    return setValidationErrors(errors);
+  }
+
+  fadeOut();
+  try {
+    const result = await action(...getValues());
+    await afterSubmit(result);
+    fadeIn();
+  } catch (e) {
+    setErrorMessage(e.message);
+    setSubmitting(false);
+    fadeIn();
+  }
+};
+```
+
+And finally, add the component:
+```jsx
+return (
+  <View style={styles.container}>
+    <Text style={styles.error}>{errorMessage}</Text>
+    {isSubmitting && (
+      <View style={styles.activityIndicatorContainer}>
+        <ActivityIndicator size="large" color="#3F5EFB" />
+      </View>
+    )}
+    <Animated.View style={{ opacity }}>
+      {fieldKeys.map((key) => {
+        return (
+          <Field
+            key={key}
+            fieldName={key}
+            field={fields[key]}
+            error={validationErrors[key]}
+            onChangeText={onChangeValue}
+            value={values[key]}
+          />
+        );
+      })}
+    </Animated.View>
+    <SubmitButton title={buttonText} onPress={submit} />
+  </View>
+);
+```
+
+To center it, we need to make a few changes to our styles, including ensuring the container is `position: relative`:
+```js
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 15,
+    position: 'relative',
+  },
+  activityIndicatorContainer: {
+    position: 'absolute',
+    flex: 1,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 2,
+  },
+  error: {
+    marginBottom: 20,
+    height: 17.5,
+  },
+});
+```
+
+Since we also want our button to display an indicator, pass `isSubmitting` down to it: `<SubmitButton title={buttonText} onPress={submit} isSubmitting={isSubmitting} />`
+
+Then, inside the button:
+```jsx
+return (
+  <TouchableWithoutFeedback onPressIn={handlePress}>
+    <Animated.View style={{ transform, ...styles.container }}>
+      <View style={styles.container}>
+        {isSubmitting ? (
+          <ActivityIndicator size="small" color="#FFFFFF" />
+        ) : (
+          <Text style={styles.text}>{title}</Text>
+        )}
+      </View>
+    </Animated.View>
+  </TouchableWithoutFeedback>
+);
+```
+
+The full effect:
+![](./activityindicator.gif)
