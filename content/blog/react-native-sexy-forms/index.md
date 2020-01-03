@@ -1241,3 +1241,55 @@ return (
 
 The full effect:
 ![](./activityindicator.gif)
+
+This looks pretty good, but you might notice it feels a little janky. In this case, it's because the animation is too quick: our back-end responds _too fast_, which leads to a jerking stop-and-start animation.
+
+To make our animation more intentional, we're actually going to slow down the back-end response. The easiest way to do this is to add a timeout.
+
+First, we add a function for our timeout:
+```jsx
+const animationTimeout = () =>
+  new Promise((resolve) => setTimeout(resolve, 700));
+
+const Form = ({ fields, buttonText, action, afterSubmit }) => {
+```
+
+All this does is create a promise that resolves after 0.7 seconds.
+
+Then, we use `Promise.all` in our `submit` function:
+```js
+const submit = async () => {
+  setSubmitting(true);
+  setErrorMessage('');
+  setValidationErrors(getInitialState(fieldKeys));
+
+  const errors = validateFields(fields, values);
+  if (hasValidationError(errors)) {
+    setSubmitting(false);
+    return setValidationErrors(errors);
+  }
+
+  fadeOut();
+  try {
+    const [result] = await Promise.all([
+      action(...getValues()),
+      animationTimeout(),
+    ]);
+    await afterSubmit(result);
+    fadeIn();
+  } catch (e) {
+    setErrorMessage(e.message);
+    setSubmitting(false);
+    fadeIn();
+  }
+};
+```
+
+`Promise.all` will only resolve once all promises passed to it resolve. In our case, it will resolve when both the request and the animation timeout resolve. If the request takes two seconds, the animation will last for two seconds, but  if the request takes half a second, the animation will still take 0.7 seconds.
+
+Note that we need to destructure `result` as `[result]` since `Promise.all` returns the result of both promises in an array.
+
+The effect:
+![](./delayedanimation.gif)
+
+Note that `700` for the timeout is relatively arbitrary. It felt the best for me, as not too long but long enough to be graceful. Experiment with shorter and longer and see what you like.
