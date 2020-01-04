@@ -1,22 +1,22 @@
 ---
 title: Sexy forms in React Native
-date: '2019-12-31T22:12:03.284Z'
+date: '2020-01-03T22:12:03.284Z'
 description: Learn how to build beautiful & well-engineered forms for iOS
 ---
 
-My last tutorial was on how to write [a simple login/signup flow in React Native](https://scottdomes.com/react-native-authentication/). That tutorial was itself a sequel to a rails tutorial on making [a simple login/signup back-end in Rails](https://scottdomes.com/rails-authentication-deploy/). So I guess you can say I’ve been an authentication kick.
+My last tutorial was on how to write [a simple login/signup flow in React Native](https://scottdomes.com/react-native-authentication/). That tutorial was itself a sequel to a tutorial on making [a simple login/signup back-end in Rails](https://scottdomes.com/rails-authentication-deploy/). So I guess you can say I’ve been an authentication kick.
 
 There’s a reason for that. Authentication is essential boilerplate. Almost every app has to do it. It’s universal, so we might as well learn to do it well.
 
-But while my last tutorial was intended to be a simple intro to authentication in React Native, what we ended up with was just a passable product. Our login form does the job but isn't particularly pretty, and isn't particular well coded.
+But while my last tutorial was intended to be a simple intro to authentication in React Native, what we ended up with is just a passable product. Our login form does the job but isn't particularly pretty, and isn't particular well coded.
 
-This tutorial will fix that. We’re going to make a sexy, beautiful inside and out form. It’ll have a bunch of cool stuff written well. And then you can just reuse this for every app you ever make and you never have to worry about forms again.
+This tutorial will fix that. We’re going to make a beautiful form for our app: beautiful inside and out. It’ll have a bunch of cool stuff in it, and some solid engineering. Once complete, you can reuse this form for your next app, and the one after that.
 
 ## Why forms?
 
-Forms are kind of boring for developers. Mostly because they ARE boilerplate-y, and they always take longer than you expect (especially in React)
+Forms are kind of boring for developers. Mostly because they ARE boilerplate-y, and they always take longer than you expect (especially in React).
 
-But I hate to break it to you: most apps are just fancy forms. Many modern apps could be excel spreadsheets. I mean that. Most have pages and pages of forms for you to fill out, but they’re hidden well.
+But when it comes down to it, most apps are just fancy forms. Most have pages and pages of forms for you to fill out as part of the core functionality.
 
 Making good forms is a big part of modern app design. So let’s make a good one.
 
@@ -55,7 +55,7 @@ We could start with something like this:
 
 ... which would create a form with three inputs.
 
-That's fine, but we need more control than that. For example, the password field needs to have secure text entry (e.g. obfuscate the input). The email field should trigger the email keyboard on the phone.
+That's fine, but we need more control than that. For example, the password field needs to have secure text entry (obfuscate the input). The email field should trigger the email keyboard on the phone.
 
 Here's a more sophisticated version:
 
@@ -121,7 +121,7 @@ export const validateContent = (text) => {
 
 If there's an error, it returns a message. Otherwise it returns `undefined`.
 
-We also split things like `secureTextEntry` into a `inputProps` key to designate that they are props that will be passed directly to the underlying input component.
+We also split things like `secureTextEntry` into an `inputProps` key to designate that they are props that will be passed directly to the underlying input component.
 
 Okay, so that's the plan! Our challenge here is to A) make it work and B) make it pretty.
 
@@ -129,7 +129,7 @@ Okay, so that's the plan! Our challenge here is to A) make it work and B) make i
 
 For the purposes of this tutorial, I'm going to assume you followed [my initial guide for React Native authentication](https://scottdomes.com/react-native-authentication/).
 
-If you haven't and can't be bothered to, the gist is that we have three main screens: HomeScreen, LoginScreen, and CreateAccountScreen. The latter two share an EmailForm component. We also have a `fetch` utility for communicating with our back-end.
+If you haven't and can't be bothered to, the gist is that we have three main screens: `HomeScreen`, `LoginScreen`, and `CreateAccountScreen`. The latter two share an `EmailForm` component. We also have a `fetch` utility for communicating with our back-end.
 
 The first thing we're going to do is improve that utility.
 
@@ -206,7 +206,7 @@ Is this essential? No. Will it make our lives easier down the line? Yes.
 
 ## Setting up our form
 
-You know that nice, lovely EmailForm component we made last time? Delete it.
+You know that nice, lovely `EmailForm` component we made last time? Delete it.
 
 Yep, we're starting from scratch. Delete it and make a file in `src/forms/` called `Form.js`.
 
@@ -964,7 +964,8 @@ export default SubmitButton;
 ```
 
 You can then swap that out for the `Button` in `Form.js`:
-![]('./button.png')
+
+![](./button.png)
 
 It looks nice, but it gives no indication of being clicked when the user presses it. Let's fix that.
 
@@ -1046,6 +1047,7 @@ const SubmitButton = ({ title, onPress }) => {
 ```
 
 Here's the result again:
+
 ![](./buttonanimation.gif)
 
 ## Fading the form
@@ -1119,6 +1121,7 @@ const submit = async () => {
 ```
 
 The result:
+
 ![](./fadeanimation.gif)
 
 ## Adding activity indicators
@@ -1240,6 +1243,7 @@ return (
 ```
 
 The full effect:
+
 ![](./activityindicator.gif)
 
 This looks pretty good, but you might notice it feels a little janky. In this case, it's because the animation is too quick: our back-end responds _too fast_, which leads to a jerking stop-and-start animation.
@@ -1290,6 +1294,7 @@ const submit = async () => {
 Note that we need to destructure `result` as `[result]` since `Promise.all` returns the result of both promises in an array.
 
 The effect:
+
 ![](./delayedanimation.gif)
 
 Note that `700` for the timeout is relatively arbitrary. It felt the best for me, as not too long but long enough to be graceful. Experiment with shorter and longer and see what you like.
@@ -1362,6 +1367,7 @@ return (
 ```
 
 And the result:
+
 ![](./goodkeyboard.gif)
 
 ## Adding a shake animation on validation error
@@ -1460,6 +1466,7 @@ Here's what thsee methods do:
 Note that both `distance` and `duration` are arbitrary; they're just values that I think look good in the final shake.
 
 Here's the effect:
+
 ![](./shake.gif)
 
 ## Conclusion
