@@ -1407,7 +1407,11 @@ If you're unclear about what `componentDidUpdate` does, check [this article](htt
 Okay, let's update the lifecycle method to reflect the logic we described above:
 ```jsx
 componentDidUpdate(prevProps) {
-  if (prevProps.isSubmitting && !this.props.isSubmitting & this.props.error) {
+  if (
+    prevProps.isSubmitting &&
+    !this.props.isSubmitting &&
+    this.props.error
+  ) {
     this.shake();
   }
 }
@@ -1420,3 +1424,48 @@ Here's everything all together:
 export default class Field extends React.Component {
   position = new Animated.Value(0);
 
+  shiftPosition(distance) {
+    const duration = 50;
+    return Animated.timing(this.position, {
+      toValue: distance,
+      duration,
+      useNativeDriver: true,
+    });
+  }
+
+  startShake = () => {
+    const distance = 8;
+
+    Animated.sequence([
+      this.shiftPosition(distance),
+      this.shiftPosition(-distance),
+      this.shiftPosition(distance),
+      this.shiftPosition(-distance),
+      this.shiftPosition(distance),
+      this.shiftPosition(0),
+    ]).start();
+  };
+
+  shake() {
+    setTimeout(this.startShake, 100);
+  }
+```
+
+Here's what thsee methods do:
+1. Introduce a new `Animated.Value` called `position`, which will refer to the input's transform.
+2. Introdue a `shake` method that calls `startShake` after a brief timeout. This is to avoid shaking until the form's opacity has finished fading in.
+3. Introduce `startShake`, which created a sequence of animations, moving the input's position back and forth.
+4. Introduce `shiftPosition`, which returns an animation that moves the input to a specific point. (You can read more about `useNativeDriver` [here](https://facebook.github.io/react-native/blog/2017/02/14/using-native-driver-for-animated)).
+
+Note that both `distance` and `duration` are arbitrary; they're just values that I think look good in the final shake.
+
+Here's the effect:
+![](./shake.gif)
+
+## Conclusion
+
+We did it! We now have a working form with lots of great UX affordances.
+
+Not only that, we can easily create more of the same form by using the same component and adding different `fields` to the prop. Try using the same basis to make a form for our `CreateAccount` page.
+
+Thanks for reading! If you learned something from this article, consider subscribing below! I rarely send out emails, but when I do, it's content like this.
