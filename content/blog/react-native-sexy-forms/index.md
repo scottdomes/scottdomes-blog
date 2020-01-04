@@ -1168,12 +1168,12 @@ And finally, add the component:
 return (
   <View style={styles.container}>
     <Text style={styles.error}>{errorMessage}</Text>
-    {isSubmitting && (
-      <View style={styles.activityIndicatorContainer}>
-        <ActivityIndicator size="large" color="#3F5EFB" />
-      </View>
-    )}
     <Animated.View style={{ opacity }}>
+      {isSubmitting && (
+        <View style={styles.activityIndicatorContainer}>
+          <ActivityIndicator size="large" color="#3F5EFB" />
+        </View>
+      )}
       {fieldKeys.map((key) => {
         return (
           <Field
@@ -1294,6 +1294,32 @@ The effect:
 
 Note that `700` for the timeout is relatively arbitrary. It felt the best for me, as not too long but long enough to be graceful. Experiment with shorter and longer and see what you like.
 
+## Submission before validation
+
+If we want to have the same submission effect _before_ validation errors are displayed (which leads to a less jarring experience), the fix is simple:
+
+```js
+const submit = async () => {
+  setSubmitting(true);
+  setErrorMessage('');
+  setValidationErrors(getInitialState(fieldKeys));
+
+  const errors = validateFields(fields, values);
+  fadeOut();
+  if (hasValidationError(errors)) {
+    await animationTimeout();
+    setSubmitting(false);
+    fadeIn();
+    return setValidationErrors(errors);
+  }
+
+  // try catch block
+```
+
+We `await` the `animationTimeout` before we set submitting to false. Note that we moved `fadeOut` up above the if-block, and also added `fadeIn` if there are validation errors. The new look for validation:
+
+![](./delayedvalidation.gif)
+
 ## Avoiding the keyboard
 
 If you toggle the software keyboard in your emulator (CMD+K on Mac), you'll see we have a little problem.
@@ -1307,12 +1333,12 @@ Fortunately, this is easy to fix in React Native. Swap out our container `View` 
 return (
   <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
     <Text style={styles.error}>{errorMessage}</Text>
-    {isSubmitting && (
-      <View style={styles.activityIndicatorContainer}>
-        <ActivityIndicator size="large" color="#3F5EFB" />
-      </View>
-    )}
     <Animated.View style={{ opacity }}>
+      {isSubmitting && (
+        <View style={styles.activityIndicatorContainer}>
+          <ActivityIndicator size="large" color="#3F5EFB" />
+        </View>
+      )}
       {fieldKeys.map((key) => {
         return (
           <Field
@@ -1344,6 +1370,53 @@ When a specific field has a validation error, we want to briefly shake it to bri
 
 We want to show the shake:
 1. When the form was previously submitting, but now is not.
-2. When the field previously has an error.
+2. When the field has an error.
 
-To do #1, we need to bring in [a lifecycle method](https://scottdomes.com/react-lifecycle-methods/).
+To do #1, we need to bring in [a lifecycle method](https://scottdomes.com/react-lifecycle-methods/). Let's convert `Field` to a class component:
+```jsx
+import React from 'react';
+import { Text, TextInput, View, StyleSheet } from 'react-native';
+
+export default class Field extends React.Component {
+  componentDidUpdate() {}
+
+  render() {
+    const { fieldName, field, value, onChangeText, error } = this.props;
+    return (
+      <View style={styles.inputContainer}>
+        <Text>{field.label}</Text>
+        <TextInput
+          style={styles.input}
+          {...field.inputProps}
+          value={value}
+          onChangeText={(text) => onChangeText(fieldName, text)}
+        />
+        <Text style={styles.error}>{error}</Text>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  // Same styles
+});
+```
+
+If you're unclear about what `componentDidUpdate` does, check [this article](https://scottdomes.com/react-lifecycle-methods/).
+
+Okay, let's update the lifecycle method to reflect the logic we described above:
+```jsx
+componentDidUpdate(prevProps) {
+  if (prevProps.isSubmitting && !this.props.isSubmitting & this.props.error) {
+    this.shake();
+  }
+}
+```
+
+`this.shake` will be a new method we'll introduce to adjust a new `Animated.Value`.
+
+Here's everything all together:
+```jsx
+export default class Field extends React.Component {
+  position = new Animated.Value(0);
+
