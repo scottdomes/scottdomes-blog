@@ -4,6 +4,8 @@ date: '2020-01-03T22:12:03.284Z'
 description: Learn how to build beautiful & well-engineered forms for iOS
 ---
 
+![](./banner.png)
+
 My last tutorial was on how to write [a simple login/signup flow in React Native](https://scottdomes.com/react-native-authentication/). That tutorial was itself a sequel to a tutorial on making [a simple login/signup back-end in Rails](https://scottdomes.com/rails-authentication-deploy/). So I guess you can say I’ve been an authentication kick.
 
 There’s a reason for that. Authentication is essential boilerplate. Almost every app has to do it. It’s universal, so we might as well learn to do it well.
