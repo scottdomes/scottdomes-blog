@@ -6,13 +6,13 @@ description: Learn how to build beautiful & well-engineered forms for iOS
 
 ![](./banner.png)
 
-My last tutorial was on how to write [a simple login/signup flow in React Native](https://scottdomes.com/react-native-authentication/). That tutorial was itself a sequel to a tutorial on making [a simple login/signup back-end in Rails](https://scottdomes.com/rails-authentication-deploy/). So I guess you can say I’ve been an authentication kick.
+My last tutorial was on how to write [a simple login/signup flow in React Native](https://scottdomes.com/react-native-authentication/). That tutorial was itself a sequel to a tutorial on making [a simple login/signup back-end in Rails](https://scottdomes.com/rails-authentication-deploy/). So I guess you can say I’ve been on an authentication kick.
 
 There’s a reason for that. Authentication is essential boilerplate. Almost every app has to do it. It’s universal, so we might as well learn to do it well.
 
-But while my last tutorial was intended to be a simple intro to authentication in React Native, what we ended up with is just a passable product. Our login form does the job but isn't particularly pretty, and isn't particular well coded.
+But while my last tutorial was intended to be a simple intro to authentication in React Native, what we ended up with was just a passable product. Our login form does the job but isn't particularly pretty, and isn't particular well engineered.
 
-This tutorial will fix that. We’re going to make a beautiful form for our app: beautiful inside and out. It’ll have a bunch of cool stuff in it, and some solid engineering. Once complete, you can reuse this form for your next app, and the one after that.
+This tutorial will fix that. We’re going to make a beautiful form for our app: beautiful inside and out. It’ll have a bunch of cool stuff in it, and some solid code. Once complete, you can reuse this form for your next app, and the one after that.
 
 ## Why forms?
 
@@ -706,7 +706,7 @@ export const hasValidationError = (errors) => {
 
 This one checks our new `errors` object and sees if any of the errors are populated. If they are, we can then cancel the back-end request.
 
-Okay, let's hope back to `Form.js` and wire it up.
+Okay, let's hop back to `Form.js` and wire it up.
 
 First, let's introduce an `validationErrors` object to state:
 ```jsx
@@ -739,7 +739,7 @@ const submit = async () => {
 };
 ```
 
-These function has a new flow:
+This function has a new flow:
 1. Erase any existing validation errors or general error messages.
 2. Validate the fields for new errors.
 3. If a validation error exists, we bow out at this point.
@@ -1299,7 +1299,7 @@ The effect:
 
 ![](./delayedanimation.gif)
 
-Note that `700` for the timeout is relatively arbitrary. It felt the best for me, as not too long but long enough to be graceful. Experiment with shorter and longer and see what you like.
+Note that `700` for the timeout is relatively arbitrary. It felt the best for me: not too long, but just long enough to lend a sense of grace. Experiment with shorter and longer timeouts and see what you like.
 
 ## Submission before validation
 
@@ -1459,7 +1459,7 @@ export default class Field extends React.Component {
   }
 ```
 
-Here's what thsee methods do:
+Here's what these methods do:
 1. Introduce a new `Animated.Value` called `position`, which will refer to the input's transform.
 2. Introdue a `shake` method that calls `startShake` after a brief timeout. This is to avoid shaking until the form's opacity has finished fading in.
 3. Introduce `startShake`, which created a sequence of animations, moving the input's position back and forth.

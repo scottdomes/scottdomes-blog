@@ -944,3 +944,5 @@ Other than that, your code should work out of the box! Try signing in, loading u
 You did it! You built a full authentication workflow for a React Native application. This is something you'll have to do for most apps, but now you can refer back to this guide (or your project code) to get it done as fast as possible.
 
 Thanks for reading! If this guide has been helpful, consider subscribing below. I have a lot more content planned along these lines.
+
+**This article now has a sequel! Check out [Sexy forms with React Native](https://scottdomes.com/react-native-sexy-forms/) to learn how to take the above and make it better-looking and better-engineered.**

@@ -327,6 +327,8 @@ To test the API, run the same Postman requests as before, but substitute your He
 
 If all works, then you're done! You have a working API with authentication support! Now, all you need is a front-end... but more on that to come. Subscribe below if you want to learn how to hook this API up to a mobile app.
 
+**Update: learn how to build an iOS app to communicate with our API in [my next tutorial.](https://scottdomes.com/react-native-authentication/)**
+
 ## Sources
 
 https://www.sitepoint.com/authenticate-your-rails-api-with-jwt-from-scratch/
