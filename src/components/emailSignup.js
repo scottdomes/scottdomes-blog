@@ -45,10 +45,10 @@ export default class EmailSignup extends React.Component {
         style={{ display: 'flex', flexDirection: 'column', padding: '0 5px' }}
         onSubmit={this.handleSubmit}
       >
+        <h2 className="text-center">Join my email list</h2>
         <p style={{ marginBottom: 10 }}>
           <strong>
-            Find out when I publish new articles & tutorials, and dive deeper
-            into React, JavaScript, GraphQL & more:
+            Find out when I publish new articles & tutorials.
           </strong>
         </p>
         <label htmlFor="email">Email:</label>
