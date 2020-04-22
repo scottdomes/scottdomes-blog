@@ -4,10 +4,12 @@ date: "2020-04-22T01:12:03.284Z"
 description: What the heck is serverless?
 ---
 
+![How AWS Lambda Works](./lambda-banner.png)
+
 Why you should care about AWS Lambda:
-- it's one of the most popular services on Amazon Web Services (AWS)... or at least one of the most TALKED about
+- it's one of the most popular services on Amazon Web Services (AWS)... or at least one of the most *talked* about
 - it's an incredibly cheap way to build your application
-- it's the most well-known representative of "servless" architecture
+- it's the most well-known representative of "serverless" architecture
 
 Which leads us to our first question... what the heck is serverless, anyway? And how does Lambda work?
 
@@ -23,6 +25,8 @@ You don't have to manage them, or provision them, or upgrade them... you do noth
 
 AWS handles the hard stuff.
 
+![Serverless means not thinking about servers](./lambda1.png)
+
 ## Just functions, baby
 
 But Lambda takes it even further than just "don't think about servers."
@@ -32,6 +36,8 @@ With Lambda, you don't manage and deploy an "application"... at least not the wa
 **Instead, you write and deploy *individual functions.***
 
 That's it. That's your only responsibility.
+
+![Write and deploy functions](./lambda2.png)
 
 Lambda can also be described as Functions as a Service (more on that later).
 
@@ -54,6 +60,8 @@ It could also:
 - call another AWS service (e.g. send a notification through AWS SNS)
 - return a response (e.g. some text content)
 
+![Lambda functions can invoke other services](./lambda3.png)
+
 Functions execute simple tasks, but you can accomplish complex tasks by linking them together.
 
 ## Functions in practice
@@ -69,6 +77,8 @@ After creating the thumbnail, the Lambda function does two things:
 2. Writes the metadata of the image to your database
 
 Boom. Simple image transformation.
+
+![Image transformation diagram](./lambda4.png)
 
 You could take this even further. Say that the image in question is a new profile picture for a user. The Lambda function could call ANOTHER Lambda function which updates the user profile in the database, and then returns the new profile.
 
