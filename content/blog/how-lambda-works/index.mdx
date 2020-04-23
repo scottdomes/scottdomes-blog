@@ -108,15 +108,21 @@ You create an alias for v1 of your function, and name it **prod**.
 
 You map `/imageupload` to point to **prod**. When a user makes a request to `/imageupload`, the v1 Lambda function is invoked.
 
+![Request going to prod alias](./lambda5.png)
+
 But then it's time to update your function. You upload a new version to Lambda. That's v2.
 
 You alias v2 and name it "test".
 
 The **prod** alias is still pointing to v1. Users are still ONLY interacting with v1.
 
+![Request going to test alias](./lambda6.png)
+
 You can test v2 thoroughly, and when you're happy, you point the **prod** alias to v2.
 
 Now, all requests to `/imageupload` are routed to v2.
+
+![Request going to v2](./lambda7.png)
 
 You can also do partial allocation, like routing 60% of traffic to **prod** to v1, 40% to v2... and then slowly ramp up v2. Bit safer that way.
 
