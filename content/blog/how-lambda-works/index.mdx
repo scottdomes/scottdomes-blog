@@ -9,9 +9,9 @@ description: What the heck is serverless?
 Why you should care about AWS Lambda:
 - it's one of the most popular services on Amazon Web Services (AWS)... or at least one of the most *talked* about
 - it's an incredibly cheap way to build your application
-- it's the most well-known representative of "serverless" architecture
+- it's a big part of AWS's "serverless" architecture
 
-Which leads us to our first question... what the heck is serverless, anyway? And how does Lambda work?
+Which leads us to our first question... what the heck is serverless, anyway?
 
 ## What does serverless mean?
 
@@ -19,7 +19,7 @@ Serverless architecture is a lie.
 
 Or, at least, a misleading name.
 
-**Serverless doesn't mean no servers are involved, it just means you don't have to *think* about those servers.**
+**Serverless doesn't mean *no* servers are involved, it just means you don't have to *think* about those servers.**
 
 You don't have to manage them, or provision them, or upgrade them... you do nothing.
 
@@ -43,7 +43,7 @@ Lambda can also be described as Functions as a Service (more on that later).
 
 ## Okay, but what do your functions do?
 
-Well, your functions are run in response to *events.*
+Well, at a fundamental level, your functions process *events.*
 
 Events can come from all sorts of places.
 
@@ -68,7 +68,7 @@ Functions execute simple tasks, but you can accomplish complex tasks by linking 
 
 Here's another example.
 
-A user uploads a new image to S3 (which is AWS' simple storage solutions)).
+A user uploads a new image to S3 (which is AWS's simple storage solutions)).
 
 That upload triggers a Lambda function, which creates a thumbnail version of the image.
 
@@ -92,7 +92,7 @@ But each is managed separately.
 
 You can update each function individually, and your "deploy process" is mostly just uploading the new code to the Lambda dashboard.
 
-Thus... Function as a Service.
+Thus... Functions as a Service.
 
 ## How do I keep track of my changing functions?
 
@@ -124,7 +124,7 @@ Now, all requests to `/imageupload` are routed to v2.
 
 ![Request going to v2](./lambda7.png)
 
-You can also do partial allocation, like routing 60% of traffic to **prod** to v1, 40% to v2... and then slowly ramp up v2. Bit safer that way.
+You can also do partial allocation, like routing 60% of traffic to **prod** to v1, 40% to v2... and then slowly ramp up v2. This is the safest approach.
 
 ## Okay, but what about the money??
 
@@ -136,7 +136,7 @@ But what makes Lambda particulary appealing is its low cost.
 
 When you deploy a typical back-end application, you deploy *instances* to *servers*. Depending on your setup, you then have to manage those instances and servers.
 
-How much management? Depends. But at the very least, you hae to keep your instances running... all the time.
+How much management? Depends. But at the very least, you have to keep your instances running... all the time.
 
 They have to be ready to receive requests, so the application MUST be running. That costs $$$.
 
@@ -164,6 +164,6 @@ In conclusion, Lambda is neat because it:
 - Is very cheap
 - Scales instantly
 
-**More importantly**, I just rebooted my email newsletter. Check it out. Get articles like this + other cool stuff, straight into your inbox, once a week.
+**On another note**, I just rebooted my email newsletter. Check it out. Get articles like this + other interesting links, straight into your inbox, once a week.
 
 <iframe src="https://scottdomes.substack.com/embed" width="480" height="320" style="border:1px solid #EEE; background:white;" frameborder="0" scrolling="no"></iframe>
