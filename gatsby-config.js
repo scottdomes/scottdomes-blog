@@ -1,8 +1,8 @@
 module.exports = {
   siteMetadata: {
-    title: `How to make money teaching online`,
+    title: `Learn to teach online`,
     author: `Scott Domes`,
-    description: `Becoming a million dollar teacher.`,
+    description: `How to make money teaching online. Becoming a million dollar teacher.`,
     siteUrl: `https://scottdomes.com/`,
     social: {
       twitter: `scottdomes`,
