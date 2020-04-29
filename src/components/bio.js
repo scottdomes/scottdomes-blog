@@ -5,18 +5,18 @@
  * See: https://www.gatsbyjs.org/docs/static-query/
  */
 
-import React from "react"
-import { StaticQuery, graphql } from "gatsby"
-import Image from "gatsby-image"
+import React from 'react';
+import { StaticQuery, graphql, Link } from 'gatsby';
+import Image from 'gatsby-image';
 
-import { rhythm } from "../utils/typography"
+import { rhythm } from '../utils/typography';
 
 function Bio() {
   return (
     <StaticQuery
       query={bioQuery}
-      render={data => {
-        const { author, social } = data.site.siteMetadata
+      render={(data) => {
+        const { author, social } = data.site.siteMetadata;
         return (
           <div
             style={{
@@ -37,17 +37,17 @@ function Bio() {
               }}
             />
             <p>
-              Hi, I'm <strong>{author}</strong>. I'm a developer/teacher who writes about React, Rails, and JavaScript.
-              {` `}
-              <a href={`https://twitter.com/${social.twitter}`}>
-                Look at my tweets.
-              </a>
+              Hi, I'm Scott. I'm on a quest to make $1 million teaching online.
+              <br /> <Link to="/million-dollar-teacher">Here's why.</Link>{' '}
+              Follow along with{' '}
+              <a href="https://scottdomes.substack.com/">my newsletter</a> or{' '}
+              <a href={`https://twitter.com/${social.twitter}`}>Twitter.</a>
             </p>
           </div>
-        )
+        );
       }}
     />
-  )
+  );
 }
 
 const bioQuery = graphql`
@@ -68,6 +68,6 @@ const bioQuery = graphql`
       }
     }
   }
-`
+`;
 
-export default Bio
+export default Bio;
