@@ -12,7 +12,7 @@ class ThanksPage extends React.Component {
 
     return (
       <Layout location={this.props.location} title={siteTitle}>
-        <SEO title="404: Not Found" />
+        <SEO title="Buy course" />
         <h1>How to learn the modern JAMStack</h1>
         <p>
           Learn to build fast, performant, modern applications and websites. Click below to

@@ -11,7 +11,7 @@ class ThanksPage extends React.Component {
 
     return (
       <Layout location={this.props.location} title={siteTitle}>
-        <SEO title="404: Not Found" />
+        <SEO title="Buy course" />
         <h1>Thank you!</h1>
         <p>
           Thanks for your interest. This course is currently under development.
