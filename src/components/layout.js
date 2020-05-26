@@ -4,6 +4,7 @@ import { rhythm, scale } from '../utils/typography';
 import { MDXProvider } from '@mdx-js/react';
 import EmailSignup from './emailSignup';
 import Checkout from './checkout';
+import './styles/layout.css'
 
 const shortcodes = { EmailSignup, Checkout };
 
@@ -17,7 +18,7 @@ class Layout extends React.Component {
       header = (
         <h1
           style={{
-            ...scale(1.5),
+            ...scale(0.6),
             marginBottom: rhythm(1.5),
             marginTop: 0,
           }}

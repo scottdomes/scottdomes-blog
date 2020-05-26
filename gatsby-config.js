@@ -1,8 +1,8 @@
 module.exports = {
   siteMetadata: {
-    title: `Scott on Software`,
+    title: `Scott Domes`,
     author: `Scott Domes`,
-    description: `Software development tutorials & guides.`,
+    description: `Collecting wisdom & advice for creatives.`,
     siteUrl: `https://scottdomes.com/`,
     social: {
       twitter: `scottdomes`,
