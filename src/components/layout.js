@@ -3,10 +3,11 @@ import { Link } from 'gatsby';
 import { rhythm, scale } from '../utils/typography';
 import { MDXProvider } from '@mdx-js/react';
 import EmailSignup from './emailSignup';
+import ReadingListSignUp from '../components/readingListSignUp';
 import Checkout from './checkout';
 import './styles/layout.css'
 
-const shortcodes = { EmailSignup, Checkout };
+const shortcodes = { EmailSignup, Checkout, ReadingListSignUp };
 
 class Layout extends React.Component {
   render() {
