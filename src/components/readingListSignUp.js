@@ -6,11 +6,11 @@ class Signup extends React.Component {
   render() {
     return (
       <form
-        action="https://app.convertkit.com/forms/812047/subscriptions"
+        action="https://app.convertkit.com/forms/1425227/subscriptions"
         className="seva-form formkit-form"
         method="post"
-        data-sv-form="812047"
-        data-uid="4a352cb1fd"
+        data-sv-form="1425227"
+        data-uid="6f81d44fbc"
         data-format="inline"
         data-version="5"
         data-options='{"settings":{"after_subscribe":{"action":"message","success_message":"Success! Now check your email to confirm your subscription.","redirect_url":""},"modal":{"trigger":null,"scroll_percentage":null,"timer":null,"devices":null,"show_once_every":null},"recaptcha":{"enabled":false},"return_visitor":{"action":"hide","custom_content":""},"slide_in":{"display_in":null,"trigger":null,"scroll_percentage":null,"timer":null,"devices":null,"show_once_every":null}}}'
