@@ -39,7 +39,7 @@ class Signup extends React.Component {
               className="formkit-subheader"
               style={{ color: 'rgb(104, 104, 104)', fontsize: '15px' }}
             >
-              <p>A short, once-a-month email of fascinating books.</p>
+              <p>A short, once-a-month email of fascinating books. <a href="/reading-list">Learn more.</a></p>
             </div>
             <div className="formkit-image">
               <img
