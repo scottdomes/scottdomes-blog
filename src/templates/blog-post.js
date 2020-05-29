@@ -1,12 +1,8 @@
 import React from 'react';
 import { Link, graphql } from 'gatsby';
 import { DiscussionEmbed } from 'disqus-react';
-
-import Bio from '../components/bio';
 import Layout from '../components/layout';
-import SEO from '../components/seo';
-import { rhythm, scale } from '../utils/typography';
-import { MDXRenderer } from 'gatsby-plugin-mdx';
+import BlogDisplay from '../components/BlogDisplay';
 
 class BlogPostTemplate extends React.Component {
   render() {
@@ -20,34 +16,7 @@ class BlogPostTemplate extends React.Component {
 
     return (
       <Layout location={this.props.location} title={siteTitle}>
-        <SEO
-          title={post.frontmatter.title}
-          description={post.frontmatter.description || post.excerpt}
-        />
-        <div
-          style={{
-            marginBottom: rhythm(1),
-          }}
-        >
-          <h1>{post.frontmatter.title}</h1>
-          <p
-            style={{
-              ...scale(-1 / 5),
-              display: `block`,
-              marginBottom: 0,
-              marginTop: rhythm(-1),
-            }}
-          >
-            {post.frontmatter.date}
-          </p>
-        </div>
-        <MDXRenderer>{post.body}</MDXRenderer>
-        <hr
-          style={{
-            marginBottom: rhythm(1),
-          }}
-        />
-        <Bio />
+        <BlogDisplay post={post} />
 
         <ul
           style={{
