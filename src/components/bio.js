@@ -37,11 +37,14 @@ function Bio() {
               }}
             />
             <p>
-              <strong>Hi, I'm Scott</strong>. I write about creativity, entrepreneurship, and software.
+              <strong>Hi, I'm Scott</strong>. I write about unconventional
+              learning strategies, uncommon books, and how to live well.
               {` `}
+              Follow me on{" "}
               <a href={`https://twitter.com/${social.twitter}`}>
-                Follow me on Twitter.
-              </a>
+                Twitter,
+              </a> or{" "}
+              <a href="https://scottdomes.substack.com/">join my newsletter.</a>
             </p>
           </div>
         )
