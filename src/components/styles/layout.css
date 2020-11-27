@@ -2,3 +2,19 @@ body {
   background-color: #fdf9f6;
 }
 
+body.dark {
+  background-color: #020910;
+}
+
+body.dark {
+  color: #b2a4c5;
+}
+
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5,
+body.dark a {
+  color: #a432ff;
+}
