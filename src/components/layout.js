@@ -5,9 +5,11 @@ import { MDXProvider } from '@mdx-js/react';
 import EmailSignup from './emailSignup';
 import ReadingListSignUp from '../components/readingListSignUp';
 import Checkout from './checkout';
+import HooksVideo from "./videos/HooksVideo"
+
 import './styles/layout.css'
 
-const shortcodes = { EmailSignup, Checkout, ReadingListSignUp };
+const shortcodes = { EmailSignup, Checkout, ReadingListSignUp, HooksVideo };
 
 class Layout extends React.Component {
   render() {

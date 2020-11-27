@@ -1,6 +1,6 @@
 import React from "react"
 import { graphql } from "gatsby"
-import Layout from "../components/layout"
+import Layout from "../components/salesLayout"
 import SEO from "../components/seo"
 import { rhythm, scale } from "../utils/typography"
 import { MDXRenderer } from "gatsby-plugin-mdx"
@@ -11,18 +11,13 @@ class SalesTemplate extends React.Component {
     const siteTitle = this.props.data.site.siteMetadata.title
 
     return (
-      <Layout location={this.props.location} title={siteTitle}>
+      <Layout location={this.props.location} title={siteTitle} hideHeader>
         <SEO
           title={post.frontmatter.title}
           description={post.frontmatter.description || post.excerpt}
         />
-        <div
-          style={{
-            marginBottom: rhythm(1),
-          }}
-        >
-          <h1>{post.frontmatter.title}</h1>
-        </div>
+        <h1>{post.frontmatter.title}</h1>
+
         <MDXRenderer>{post.body}</MDXRenderer>
         <hr
           style={{
