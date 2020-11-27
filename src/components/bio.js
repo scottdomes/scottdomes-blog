@@ -37,14 +37,13 @@ function Bio() {
               }}
             />
             <p>
-              <strong>Hi, I'm Scott</strong>. I write about unconventional
-              learning strategies, uncommon books, and how to live well.
+              The history of what we're capable of &mdash; the good, the bad,
+              and the incredible.
               {` `}
-              Follow me on{" "}
-              <a href={`https://twitter.com/${social.twitter}`}>
-                Twitter,
-              </a> or{" "}
-              <a href="https://scottdomes.substack.com/">join my newsletter.</a>
+              Subscribe to{" "}
+              <a href="https://scottdomes.substack.com/">my newsletter.</a> and
+              follow me on{" "}
+              <a href={`https://twitter.com/${social.twitter}`}>Twitter.</a>
             </p>
           </div>
         )

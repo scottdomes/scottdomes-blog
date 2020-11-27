@@ -14,9 +14,13 @@ class BlogIndex extends React.Component {
 
     return (
       <Layout location={this.props.location} title={siteTitle}>
-        <SEO title="Scott's notebook" />
+        <SEO title="Blog" />
         <Bio />
         {posts.map(({ node }) => {
+          if (node.frontmatter.deprecated) {
+            return null;
+          }
+
           const title = node.frontmatter.title || node.fields.slug
           return (
             <div key={node.fields.slug}>
@@ -63,6 +67,7 @@ export const pageQuery = graphql`
             date(formatString: "MMMM DD, YYYY")
             title
             description
+            deprecated
           }
         }
       }
