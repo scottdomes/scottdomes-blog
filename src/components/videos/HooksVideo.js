@@ -1,5 +1,5 @@
 import React from "react"
-import Video from "../Video"
+import Video from "../video"
 import Hooks from "./hooks-cover.mp4"
 
 const HooksVideo = ({}) => {
