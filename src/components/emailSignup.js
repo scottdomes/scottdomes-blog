@@ -48,7 +48,7 @@ export default class EmailSignup extends React.Component {
         <h2 className="text-center">Join my email list</h2>
         <p style={{ marginBottom: 10 }}>
           <strong>
-            Find out when I publish new articles & tutorials.
+            A short weekly summary of my writing + good stuff I've come across.
           </strong>
         </p>
         <label htmlFor="email">Email:</label>
