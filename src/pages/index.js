@@ -17,9 +17,9 @@ class BlogIndex extends React.Component {
         <SEO title="Blog" />
         <Bio />
         {posts.map(({ node }) => {
-          // if (node.frontmatter.deprecated) {
-          //   return null;
-          // }
+          if (node.frontmatter.deprecated) {
+            return null;
+          }
 
           const title = node.frontmatter.title || node.fields.slug
           return (

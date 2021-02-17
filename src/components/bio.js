@@ -37,8 +37,7 @@ function Bio() {
               }}
             />
             <p>
-              The history of what we're capable of &mdash; the good, the bad,
-              and the incredible.
+              How to learn complex skills, without getting discouraged.
               {` `}
               Subscribe to{" "}
               <a href="https://scottdomes.substack.com/">my newsletter.</a> and
