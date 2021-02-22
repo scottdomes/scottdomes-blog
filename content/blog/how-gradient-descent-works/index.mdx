@@ -4,30 +4,30 @@ date: "2021-02-18T22:12:03.284Z"
 description: The secret behind machine learning
 ---
 
-Machine learning is the process by which an algorithm gets less and less wrong.
+Machine learning is the process by which an algorithm gets smarter over time. _Smarter_ in this case means _better at prediction_. 
 
-This is really the essence of "learning," in most fields: be wrong less often.
+We could also define becoming _smarter_ as becoming _less wrong._ That definition works for both humans and machines: the purpose of learning is to _try to be wrong less often._
 
-The mechanism by which ML achieves this is called gradient descent. In this article, you'll learn what that is and why it matters.
+The mechanism by which machine learning achieves this (in many cases) is called **gradient descent**. In this article, **you'll learn what that is and why it matters.**
 
-But before we get there, let's talk about... jellybeans. More specifically, let's talk about how you learn.
+But before we get there, let's talk about... jellybeans. More specifically, let's talk about how _you_ learn.
 
 ## Human learning
 
-You remember those contests at school fairs where you had to guess the number of jelly beans in a jar? I was pretty bad at it, as I imagine most people were.
+Do you remember those contests at school fairs where you had to guess the number of jelly beans in a jar? I was pretty bad at it, as I imagine most people were.
 
 ![Jelly beans in a jar](./jellybeans.jpeg)
 
-But I think it's fair to say that if you practiced the art of jelly bean guessing, you'd get better at it.
+But I think it's fair to say that if you really practiced jelly bean guessing, you'd get better at it.
 
-If you trained with a bunch of different jars, over a period of months, you'd probably get more and more accurate with your guessing. Your parents might worry about you/wonder when you're going to move out of their basement, but you'd get better at jelly bean guessing.
+If you trained with a bunch of different jars, over a period of months, you'd probably get more and more accurate with your guessing. Your parents might worry about you/wonder when you're going to move out of their basement, but you'd win more jelly bean prediction contests.
 
-How would you get better? Well, you'd learn that a small jar corresponds with a certain amount, a larger jar with a larger amount, and with enough practice.. you'd be able to look at the size of a jar and come up with a pretty good guess.
+How would you get better? Well, you'd learn that a small jar corresponds with a certain amount, a larger jar with a larger amount, and with enough practice... you'd be able to look at the size of a jar and come up with a pretty good guess.
 
 ## Tracking progress
 
 If you wanted to visualize your progress over time, you could graph it.
-The best measure would be the difference between your guess and the actual number of jelly beans in the jar. This is a measure of how wrong you are.
+The best measure would be the difference between your guess and the actual number of jelly beans in the jar. We can define this as _a measure of how wrong you are,_ for a given jar.
 
 Let's say these values represent the difference between your prediction and the actual amount:
 
@@ -38,70 +38,66 @@ We can graph it like so:
 
 ![A graph showing how far off you were narrowing over time](./nonabsoluteerror.png)
 
-For simplicity's sake, we can treating positive and negative difference as the same thing; if you're under by 3 jelly beans, that's the same amount of "wrong" as being over by 3 jelly beans.
+For simplicity's sake, we can change this graph to treat positive and negative differences as the same thing; if you're under by 3 jelly beans, that's the same amount of "wrong" as being over by 3 jelly beans.
 
-This is called taking the absolute of each error, which yields the following graph:
+In technical terms, treating positive and negatives the same is called **taking the absolute of each error**, which yields the following graph:
 
 ![A graph showing your absolute error decreasing over time](./absoluteerror.png)
 
-Your margin of error decreases over time, which shows you're learning!
+Your absolute error decreases over time, which shows you're learning!
 
 ## Descending
 
-You can think of the line in that last graph as your "wrongness." As you get better, you slope towards zero. 
+You can think of the line in that last graph as your "wrongness" or your _error_. As you get better at guessing, your error slopes towards zero. 
 
-Remember that zero means no difference between your guess and the number of jelly beans, which means you are exactly correct.
+Remember that an error of zero means there is no difference between your guess and the number of jelly beans, which means you are _exactly correct_.
 
-As you descend, you get less and less wrong.
+As the slope descends over time, it means you're becoming less and less wrong.
 
-We can also call this minimizing error.
+We call this **minimizing error.**
 
 > MINIMIZING ERROR = DESCENDING THE SLOPE = BEING LESS WRONG
 
 ## How machines learn
-Turns out, in machine learning, we follow the same process.
+In machine learning, we follow the same process.
 
-Let's say you're trying to figure out the algorithm for jelly beans. For a given jar volume (in milliliters squared), you want to be able to figure out the number of jellybeans (assume they are a fixed size).
+Let's say you're trying to figure out the algorithm for jelly beans. **For a given jar volume**, **you want to be able to figure out the number of jellybeans**.
 
-(Necessary caveat: my jelly bean calculations for the rest of this article are approximations only, and should not be used to try to win any contests.)
+(Necessary caveat: my jelly bean calculations for the rest of this article are approximations only, and should not be used to try to win any contests. I'm assuming jelly beans are always the same size.)
 
-We're trying to figure out the relationship between two variables: jar size, which we'll call x, and jelly bean count, which we'll call y.
+We're trying to figure out the relationship between two variables: **jar size, which we'll call x, and jelly bean count, which we'll call y.**
 
-For a given jar size (x), we want to be able to guess the jelly bean count (y).
+**For a given jar size (x), we want to be able to guess the jelly bean count (y).**
 
-We can state this another way. We want to minimize the wrongness of our prediction. 
+We can state this another way. We want to _minimize the wrongness of our prediction._
 
-For each guess, we want to have the lowest possible error. So for a given x value, we want to try to find the y that gives us the lowest possible error.
+For each guess, we want to have the _lowest possible error_. So **for a given x value, we want to try to find the y that gives us the lowest possible error.**
 
 ## Guessing and learning
 
-To teach our machine to guess jelly beans, we give it a training set: a bunch of correct data about jar sizes and jelly beans counts.
+To teach our algorithm to guess jelly beans, we give it a training set: a bunch of correct data about jar sizes and jelly beans counts.
 
 ![The training set, with values for jar size and number of jelly beans](./trainingset.png)
 
-The actual relationship between these values is that number of _jelly beans = twice the jar size plus forty_. But our machine doesn't know that yet; that's what it's trying to figure out.
+The actual relationship between these values is that _the number of jelly beans = twice the jar size plus forty_. But our machine doesn't know that yet; that's what it's trying to figure out.
 
 > Correct answer: y = 2x + 40
-
-(Once again I am not a jelly bean expert and I did not attempt to test this relationship with actual jelly beans.)
 
 So we start training. We start our machine off with a random guess. Let's say we guess that _the number of jelly beans equals three times the jar size plus twenty_.
 
 > First guess: y = 3x + 20
 
-Our ML algorithm runs through the training set, applying this calculation and comparing it to the right answer. Each time, it's off by a certain amount. We add all those errors together and average them.
+Our ML algorithm runs through the training set, applying this calculation and comparing it to the right answer. For each jar, it's off by a certain amount. We add all those errors together and average them.
 
-This number could be negative or positive, but in machine learning we generally square it. This is called the mean squared error, or MSE.
+This number could be negative or positive, but in machine learning we generally square it. This is called **the mean squared error, or MSE.**
 
 MSE is just a measure of how wrong we are. For this training set, here's how far off we were for each value:
 
 ![The errors of our algorithm's first attempt](./firstguesserrors.png)
 
-All these errors are positive, since we overshot the values. This makes sense, since we multiplied our jar size by 3 instead of 2. 
+All these errors are positive, since we overshot the values. This makes sense, since we multiplied our jar size by 3 instead of 2. (Remember that the correct algorithm is _2x + 40_, and we guessed _3x + 20_.) 
 
-To calculate the mean squared error, we square all these errors and add them up, then divide them by the number of guesses.
-
-And thus here's the mean standard error:
+**To calculate the mean squared error, we square all these errors and add them up, then divide them by the number of guesses.**
 
 ![Mean squared error of 310400](./mse.png)
 
@@ -111,12 +107,12 @@ Let's put our MSE on a graph, as our first data point.
 
 ![A graph showing MSE over attempts, with just a single value for MSE](./attempt1.png)
 
-As we make more attempts, we want to bring that value down, and get it closer to zero.
+As we make more attempts, we want to bring that value down, and get it _as close as possible_ to zero.
 
 ## Improving
 
-So, our guess of the correct algorithm was wrong. Let's take a different guess.
-Instead of guessing that jelly bean count = 3 * jar size plus twenty, let's guess it will be _3.1 * the jar size plus 19_.
+So, our first guess at the algorithm was wrong. Let's take a different guess.
+Instead of guessing that jelly bean count = 3 \* jar size plus 20, let's guess it will be 3.1 \* the jar size plus 19.
 
 > Second guess: y = 3.1x + 19
 
@@ -124,7 +120,7 @@ We calculate the MSE, and plot it...
 
 ![Our graph going uphill, away from zero](./attempt2.png)
 
-Oops! We're going in the wrong direction! We're ascending the hill, instead of descending. So let's go the opposite direction. Let's make our equation 2.9x + 21.
+Oops! We're going in the wrong direction! We're ascending, which means we're getting _more_ wrong. Let's go in the opposite direction. Let's make our equation 2.9x + 21.
 
 > Third guess: y = 2.9x + 21
 
@@ -138,12 +134,14 @@ In time, we'll end up with the correct algorithm: 2x + 40. Our machine has learn
 
 # Where do we go from here?
 
-The above process is called gradient descent. The term "gradient" refers to seeing how our position changes when we change one of our inputs.
+The above process is called **gradient descent**. As we saw here, _descent_ means minimizing error, or getting less wrong over time.
 
-In fact, by calculating the gradient, our algorithm is able to automatically "detect" which way goes downhill, and make the necessary changes. But that relies on some more complex mathematics, which I'll cover in a future article.
+The term _gradient_ is more technical, and refers to seeing how our position changes when we change one of our inputs. **By calculating the gradient of the slope our algorithm would be able to automatically "detect" which way goes downhill, and make the necessary changes.** But that relies on some more complex mathematics, which I'll cover in a future article.
 
-I've simplified the process a lot, but this should give you an idea of what it is and why it's powerful.
+I've simplified the process a lot, but this should give you an idea of why gradient descent works to train ML algorithms.
 
-Now, you're ready to dive deeper into how machine learning works. Stay tuned for future articles discussing some of the challenges and usecases for the above process.
+Stay tuned for future articles discussing some of the challenges and usecases for the above process.
 
 If you're interested, I send out a weekly newsletter covering the writing I do each week, plus interesting sources I find. Try it out:
+
+<EmailSignup />
