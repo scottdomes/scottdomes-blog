@@ -89,7 +89,7 @@ So we start training. We start our machine off with a random guess. Let's say we
 
 Our ML algorithm runs through the training set, applying this calculation and comparing it to the right answer. For each jar, it's off by a certain amount. We add all those errors together and average them.
 
-This number could be negative or positive, but in machine learning we generally square it. This is called **the mean squared error, or MSE.**
+This number could be negative or positive, but in machine learning we generally square the errors before adding them up. This is called **the mean squared error, or MSE.**
 
 MSE is just a measure of how wrong we are. For this training set, here's how far off we were for each value:
 
@@ -103,7 +103,7 @@ All these errors are positive, since we overshot the values. This makes sense, s
 
 Your first thought might be whoa, that's a big number! That's actually a good thing, though. Squaring the error ensures it's always positive, and also means differences are magnified. Since our goal is to get as close to zero as possible, we want to be able to see big differences more clearly.
 
-Let's put our MSE on a graph, as our first data point.
+Let's put our MSE on a graph, as our first data point. Remember that the MSE is the _average_ of applying our guess to many jars. For each guess attempt (e.g. 3x + 20), we'll generate a single mean squared error.
 
 ![A graph showing MSE over attempts, with just a single value for MSE](./attempt1.png)
 
@@ -136,9 +136,9 @@ In time, we'll end up with the correct algorithm: 2x + 40. Our machine has learn
 
 The above process is called **gradient descent**. As we saw here, _descent_ means minimizing error, or getting less wrong over time.
 
-The term _gradient_ is more technical, and refers to seeing how our position changes when we change one of our inputs. **By calculating the gradient of the slope our algorithm would be able to automatically "detect" which way goes downhill, and make the necessary changes.** But that relies on some more complex mathematics, which I'll cover in a future article.
+The term _gradient_, which we didn't cover here, is more technical. It refers to seeing how our position changes when we change one of our inputs. **By calculating the gradient of the slope our algorithm would be able to automatically "detect" which way goes downhill, and make the necessary changes.** But that relies on some more complex mathematics, which I'll cover in a future article.
 
-I've simplified the process a lot, but this should give you an idea of why gradient descent works to train ML algorithms.
+I've simplified the process, but this should give you an idea of why gradient descent works to train ML algorithms.
 
 Stay tuned for future articles discussing some of the challenges and usecases for the above process.
 
