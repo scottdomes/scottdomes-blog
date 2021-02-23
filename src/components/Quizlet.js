@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import styles from "./styles/Quizlet.module.css"
 
 const Banner = ({ isCorrect, hasAnswered }) => {
   if (!hasAnswered) {
@@ -23,24 +24,32 @@ const Quizlet = ({ answers, id, indexOfCorrectAnswer, question }) => {
     setHasAnswered(true)
   }
   return (
-    <div>
-      <h4>Knowledge check</h4>
-      <h5>{question}</h5>
-      <form onSubmit={onSubmit}>
+    <div className={styles.container}>
+      <h4 className={styles.heading}>Knowledge check</h4>
+      <h5 className={styles.question}>{question}</h5>
+      <form className={styles.form} onSubmit={onSubmit}>
         {answers.map((answer, i) => {
           return (
             <div key={`${id}${i}`}>
               <input
+                className={styles.input}
                 type="radio"
                 id={`${id}${i}`}
-                onChange={() => setSelectedAnswerIndex(i)}
+                onChange={() => {
+                  setSelectedAnswerIndex(i)
+                  setHasAnswered(false)
+                }}
                 checked={selectedAnswerIndex === i}
               />
-              <label htmlFor={`${id}${i}`}>{answer}</label>
+              <label className={styles.label} htmlFor={`${id}${i}`}>
+                {answer}
+              </label>
             </div>
           )
         })}
-        <button type="submit">Submit</button>
+        <button type="submit" className={styles.button}>
+          Submit
+        </button>
       </form>
       <Banner isCorrect={isCorrect} hasAnswered={hasAnswered} />
     </div>
