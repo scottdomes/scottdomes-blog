@@ -1,21 +1,22 @@
-import React from 'react';
-import { Link } from 'gatsby';
-import { rhythm, scale } from '../utils/typography';
-import { MDXProvider } from '@mdx-js/react';
-import EmailSignup from './emailSignup';
-import ReadingListSignUp from '../components/readingListSignUp';
-import Checkout from './checkout';
+import React from "react"
+import "katex/dist/katex.min.css"
+import { Link } from "gatsby"
+import { rhythm, scale } from "../utils/typography"
+import { MDXProvider } from "@mdx-js/react"
+import EmailSignup from "./emailSignup"
+import ReadingListSignUp from "../components/readingListSignUp"
+import Checkout from "./checkout"
 import HooksVideo from "./videos/HooksVideo"
 
-import './styles/layout.css'
+import "./styles/layout.css"
 
-const shortcodes = { EmailSignup, Checkout, ReadingListSignUp, HooksVideo };
+const shortcodes = { EmailSignup, Checkout, ReadingListSignUp, HooksVideo }
 
 class Layout extends React.Component {
   render() {
-    const { location, title, children } = this.props;
-    const rootPath = `${__PATH_PREFIX__}/`;
-    let header;
+    const { location, title, children } = this.props
+    const rootPath = `${__PATH_PREFIX__}/`
+    let header
 
     if (location.pathname === rootPath) {
       header = (
@@ -37,7 +38,7 @@ class Layout extends React.Component {
             {title}
           </Link>
         </h1>
-      );
+      )
     } else {
       header = (
         <h3
@@ -57,7 +58,7 @@ class Layout extends React.Component {
             {title}
           </Link>
         </h3>
-      );
+      )
     }
     return (
       <MDXProvider components={shortcodes}>
@@ -71,15 +72,15 @@ class Layout extends React.Component {
         >
           <header>{header}</header>
           <main>{children}</main>
-          <footer style={{fontSize: 12}}>
+          <footer style={{ fontSize: 12 }}>
             © {new Date().getFullYear()}, Built with
             {` `}
             <a href="https://www.gatsbyjs.org">Gatsby</a>
           </footer>
         </div>
       </MDXProvider>
-    );
+    )
   }
 }
 
-export default Layout;
+export default Layout
