@@ -7,10 +7,18 @@ const Banner = ({ isCorrect, hasAnswered }) => {
   }
 
   if (isCorrect) {
-    return <p>That's correct!</p>
+    return (
+      <div className={`${styles.banner} ${styles.correctBanner}`}>
+        <p className={styles.bannerText}>Correct! 🎉</p>
+      </div>
+    )
   }
 
-  return <p>That's incorrect. Try again!</p>
+  return (
+    <div className={`${styles.banner} ${styles.incorrectBanner}`}>
+      <p className={styles.bannerText}>Try again!</p>
+    </div>
+  )
 }
 
 const Quizlet = ({ answers, id, indexOfCorrectAnswer, question }) => {

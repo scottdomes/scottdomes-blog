@@ -22,6 +22,10 @@
   margin-bottom: 20px;
 }
 
+.input:hover, .label:hover {
+  cursor: pointer;
+}
+
 .form {
   margin: 0;
 }
@@ -44,4 +48,27 @@
 .button:focus {
   background-color: #a54844;
   outline: 0 !important;
+}
+
+
+.banner {
+  margin-top: 20px;
+  text-align: center;
+  color: white;
+  padding: 5px;
+  margin-left: -20px;
+  margin-right: -20px;
+  margin-bottom: -20px;
+}
+
+.bannerText {
+  margin: 0;
+}
+
+.correctBanner {
+  background-color: rgb(99, 168, 99);
+}
+
+.incorrectBanner {
+  background-color: rgb(105, 105, 105);
 }
