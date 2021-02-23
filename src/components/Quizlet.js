@@ -1,5 +1,19 @@
 import React, { useState } from "react"
 import styles from "./styles/Quizlet.module.css"
+import { trackCustomEvent } from "gatsby-plugin-google-analytics"
+
+const trackAnswerEvent = (label, isCorrect) => {
+  trackCustomEvent({
+    // string - required - The object that was interacted with (e.g.video)
+    category: "Form",
+    // string - required - Type of interaction (e.g. 'play')
+    action: "Submit",
+    // string - optional - Useful for categorizing events (e.g. 'Spring Campaign')
+    label,
+    // number - optional - Numeric value associated with the event. (e.g. A product ID)
+    value: isCorrect ? 1 : 0,
+  })
+}
 
 const Banner = ({ isCorrect, hasAnswered }) => {
   if (!hasAnswered) {
@@ -30,6 +44,7 @@ const Quizlet = ({ answers, id, indexOfCorrectAnswer, question }) => {
     e.preventDefault()
     setIsCorrect(selectedAnswerIndex === indexOfCorrectAnswer)
     setHasAnswered(true)
+    trackAnswerEvent(selectedAnswerIndex === indexOfCorrectAnswer, question)
   }
   return (
     <div className={styles.container}>
