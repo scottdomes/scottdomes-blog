@@ -5,12 +5,20 @@ import { rhythm, scale } from "../utils/typography"
 import { MDXProvider } from "@mdx-js/react"
 import EmailSignup from "./emailSignup"
 import ReadingListSignUp from "../components/readingListSignUp"
+import Quizlet from "../components/Quizlet"
+
 import Checkout from "./checkout"
 import HooksVideo from "./videos/HooksVideo"
 
 import "./styles/layout.css"
 
-const shortcodes = { EmailSignup, Checkout, ReadingListSignUp, HooksVideo }
+const shortcodes = {
+  EmailSignup,
+  Checkout,
+  ReadingListSignUp,
+  HooksVideo,
+  Quizlet,
+}
 
 class Layout extends React.Component {
   render() {

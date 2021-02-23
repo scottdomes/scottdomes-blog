@@ -4,7 +4,7 @@ date: "2021-02-18T22:12:03.284Z"
 description: Learn how machine learning algorithms get less wrong over time
 ---
 
-Machine learning is the process by which an algorithm gets smarter over time. _Smarter_ in this case means _better at prediction_. 
+Machine learning is the process by which an algorithm gets smarter over time. _Smarter_ in this case means _better at prediction_.
 
 We could also define becoming _smarter_ as becoming _less wrong._ That definition works for both humans and machines: the purpose of learning is to _try to be wrong less often._
 
@@ -33,7 +33,7 @@ Let's say these values represent the difference between your prediction and the 
 
 ![A spreadsheet showing number of jelly beans in a jar, your guess, and how far off you were](./jellybean-stats.png)
 
-Sometimes you guess too many, sometimes too few. 
+Sometimes you guess too many, sometimes too few.
 We can graph it like so:
 
 ![A graph showing how far off you were narrowing over time](./nonabsoluteerror.png)
@@ -46,9 +46,19 @@ In technical terms, treating positive and negatives the same is called **taking 
 
 Your absolute error decreases over time, which shows you're learning!
 
+<Quizlet
+  question="What does a decreasing absolute error mean?"
+  answers={[
+    "Our algorithm is getting dumber",
+    "Our algorithm is getting smarter",
+  ]}
+  id="absolute-error
+  indexOfCorrectAnswer={1}
+/>
+
 ## Descending
 
-You can think of the line in that last graph as your "wrongness" or your _error_. As you get better at guessing, your error slopes towards zero. 
+You can think of the line in that last graph as your "wrongness" or your _error_. As you get better at guessing, your error slopes towards zero.
 
 Remember that an error of zero means there is no difference between your guess and the number of jelly beans, which means you are _exactly correct_.
 
@@ -59,6 +69,7 @@ We call this **minimizing error.**
 > MINIMIZING ERROR = DESCENDING THE SLOPE = BEING LESS WRONG
 
 ## How machines learn
+
 In machine learning, we follow the same process.
 
 Let's say you're trying to figure out the algorithm for jelly beans. **For a given jar volume**, **you want to be able to figure out the number of jellybeans**.
@@ -95,7 +106,7 @@ MSE is just a measure of how wrong we are. For this training set, here's how far
 
 ![The errors of our algorithm's first attempt](./firstguesserrors.png)
 
-All these errors are positive, since we overshot the values. This makes sense, since we multiplied our jar size by 3 instead of 2. (Remember that the correct algorithm is _2x + 40_, and we guessed _3x + 20_.) 
+All these errors are positive, since we overshot the values. This makes sense, since we multiplied our jar size by 3 instead of 2. (Remember that the correct algorithm is _2x + 40_, and we guessed _3x + 20_.)
 
 **To calculate the mean squared error, we square all these errors and add them up, then divide them by the number of guesses.**
 
