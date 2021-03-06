@@ -1,0 +1,19 @@
+.rowContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  width: 5px;
+  height: 5px;
+  border: 1px solid #e6e6e6;
+  display: block;
+}
+
+.blackCell {
+  background-color: black;
+}

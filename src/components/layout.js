@@ -6,6 +6,7 @@ import { MDXProvider } from "@mdx-js/react"
 import EmailSignup from "./emailSignup"
 import ReadingListSignUp from "../components/readingListSignUp"
 import Quizlet from "../components/Quizlet"
+import WolframPattern from "../components/WolframPattern"
 
 import Checkout from "./checkout"
 import HooksVideo from "./videos/HooksVideo"
@@ -18,6 +19,7 @@ const shortcodes = {
   ReadingListSignUp,
   HooksVideo,
   Quizlet,
+  WolframPattern,
 }
 
 class Layout extends React.Component {
