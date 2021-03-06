@@ -48,19 +48,33 @@ const WolframPattern = () => {
   initialRows[0] = firstRow
   const [rows, setRows] = useState(initialRows)
   const [customRule, setCustomRule] = useState([])
-  const rule = RULE_30
+  // const rule = RULE_30
+
+  const customRuleEval = (cell, leftNeighbor, rightNeighbor) => {
+    return eval(customRule.join(" "))
+  }
 
   const getUpdatedRows = () => {
     const newRows = [...rows]
     for (let i = 1; i < rows.length; i++) {
-      newRows[i] = updateRow(newRows[i], newRows[i - 1], rule)
+      newRows[i] = updateRow(newRows[i], newRows[i - 1], customRuleEval)
     }
     return newRows
   }
-
-  const rowsToUpdate = getUpdatedRows()
+  const testCustomRule = () => {
+    try {
+      customRuleEval(rows[0][50], rows[0][49], rows[0][51])
+      return true
+    } catch (e) {
+      return false
+    }
+  }
 
   const updateRows = () => {
+    const isWorking = testCustomRule()
+    console.log("Works?", isWorking)
+    const rowsToUpdate = getUpdatedRows()
+
     setRows(rowsToUpdate)
   }
 
@@ -115,6 +129,7 @@ const WolframPattern = () => {
         <button onClick={() => addToRule("||")}>OR</button>
         <button onClick={() => addToRule("===")}>EQUALS</button>
         <button onClick={() => addToRule("!==")}>DOES NOT EQUAL</button>
+        <button onClick={() => addToRule("!")}>NOT</button>
         <button onClick={() => addToRule("leftNeighbor")}>Left neighbor</button>
         <button onClick={() => addToRule("rightNeighbor")}>
           Right neighbor
