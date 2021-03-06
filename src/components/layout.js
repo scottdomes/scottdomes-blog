@@ -7,6 +7,7 @@ import EmailSignup from "./emailSignup"
 import ReadingListSignUp from "../components/readingListSignUp"
 import Quizlet from "../components/Quizlet"
 import WolframPattern from "../components/WolframPattern"
+import BinaryWolframPattern from "../components/BinaryWolframPattern"
 
 import Checkout from "./checkout"
 import HooksVideo from "./videos/HooksVideo"
@@ -20,6 +21,7 @@ const shortcodes = {
   HooksVideo,
   Quizlet,
   WolframPattern,
+  BinaryWolframPattern,
 }
 
 class Layout extends React.Component {
