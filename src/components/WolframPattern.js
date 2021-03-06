@@ -181,6 +181,12 @@ const WolframPattern = ({ defaultRule }) => {
             >
               IS FILLED
             </button>
+            <button
+              className={styles.button}
+              onClick={() => addToRule("=== 0")}
+            >
+              IS NOT FILLED
+            </button>
             <button className={styles.button} onClick={deleteFromRule}>
               Delete
             </button>
