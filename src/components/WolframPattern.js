@@ -1,6 +1,20 @@
 import React, { useState } from "react"
 import styles from "./styles/WolframPattern.module.css"
 
+const RULE_90 = (cell, leftNeighbor, rightNeighbor) => {
+  return (
+    (leftNeighbor === 1 || rightNeighbor === 1) &&
+    leftNeighbor !== rightNeighbor
+  )
+}
+
+const RULE_30 = (previousCell, leftNeighbor, rightNeighbor) => {
+  return (
+    (leftNeighbor && !(previousCell || rightNeighbor)) ||
+    (!leftNeighbor && (previousCell || rightNeighbor))
+  )
+}
+
 const NUMBER_OF_ROWS = 50
 const getEmptyRow = () => {
   return Array(101)
@@ -26,7 +40,6 @@ const updateRow = (row, previousRow, rule) => {
     const leftNeighbor = previousRow[i - 1] || 0
     const rightNeighbor = previousRow[i + 1] || 0
     const previousCell = previousRow[i]
-    console.log(leftNeighbor, rightNeighbor, previousCell)
     return rule(previousCell, leftNeighbor, rightNeighbor) ? 1 : 0
   })
 }
@@ -34,25 +47,43 @@ const updateRow = (row, previousRow, rule) => {
 const WolframPattern = () => {
   initialRows[0] = firstRow
   const [rows, setRows] = useState(initialRows)
+  const [customRule, setCustomRule] = useState([])
+  const rule = RULE_30
 
-  const rule = (cell, leftNeighbor, rightNeighbor) => {
-    return (
-      (leftNeighbor === 1 || rightNeighbor === 1) &&
-      leftNeighbor !== rightNeighbor
-    )
-  }
-
-  const updateRows = () => {
+  const getUpdatedRows = () => {
     const newRows = [...rows]
     for (let i = 1; i < rows.length; i++) {
       newRows[i] = updateRow(newRows[i], newRows[i - 1], rule)
     }
-    setRows(newRows)
+    return newRows
+  }
+
+  const rowsToUpdate = getUpdatedRows()
+
+  const updateRows = () => {
+    setRows(rowsToUpdate)
   }
 
   const resetRows = () => {
     setRows(initialRows)
   }
+
+  const addToRule = character => {
+    const newRule = [...customRule, character]
+    setCustomRule(newRule)
+  }
+
+  const deleteFromRule = () => {
+    const newRule = [...customRule]
+    newRule.pop()
+    setCustomRule(newRule)
+  }
+
+  const clearCustomRule = () => {
+    setCustomRule([])
+  }
+
+  console.log(customRule)
 
   return (
     <div>
@@ -76,6 +107,23 @@ const WolframPattern = () => {
       </div>
       <button onClick={updateRows}>Run</button>
       <button onClick={resetRows}>Reset</button>
+      <p>{customRule.join(" ")}</p>
+      <div>
+        <button onClick={() => addToRule("(")}>(</button>
+        <button onClick={() => addToRule(")")}>)</button>
+        <button onClick={() => addToRule("&&")}>AND</button>
+        <button onClick={() => addToRule("||")}>OR</button>
+        <button onClick={() => addToRule("===")}>EQUALS</button>
+        <button onClick={() => addToRule("!==")}>DOES NOT EQUAL</button>
+        <button onClick={() => addToRule("leftNeighbor")}>Left neighbor</button>
+        <button onClick={() => addToRule("rightNeighbor")}>
+          Right neighbor
+        </button>
+        <button onClick={() => addToRule("cell")}>Cell</button>
+        <button onClick={() => addToRule("=== 1")}>IS FILLED</button>
+        <button onClick={deleteFromRule}>Delete</button>
+        <button onClick={clearCustomRule}>Clear</button>
+      </div>
     </div>
   )
 }
