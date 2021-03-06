@@ -4,16 +4,124 @@ date: "2021-03-06T22:12:03.284Z"
 description: Stephen Wolfram's wild rules
 ---
 
-Cell is filled, or either neighbor is filled:
+The holy grail of physics is the so-called Theory of Everything, a single framework that explains all physical aspects of the universe. Right now, we have the theory of general relativity, which works very well for big things, and we have the theory of quantum mechanics, which works well for very small things, but we have no single theory to explain them both.
+
+Ideally, the Theory of Everything would rest on a single set of equations that explain... well, everything. Everything from the beginning of the universe, when all matter was squished together before the Big Bang, all the way to our present day, expanding universe.
+
+When you stop to think about it, this does seem a little crazy. Can a few equations really explain EVERYTHING? The universe is mind-blogglingly massive and complex. Can we possibly reduce it all to a bit of math?
+
+Stephen Wolfram says we can.
+
+Wolfram is a computer scientist and physicist who has had a very busy and storied career, but today we'll focus on just one contribution. Wolfram proved that you can generate complex behaviour from a few very simple rules.
+
+Let's take a simple grid, like so. The grid is divided into cells, and in the middle of the very top row, one cell is filled in.
+
+GRID 
+
+From there, you can proceed row by row down the grid (second row, third row, fourth row), filling in cells. Which cells you fill in depends on what rule you define.
+
+Here's an example rule. If the same cell in the previous row is filled in, we fill it in again. Click Run below to see what pattern this generates.
+
+LINE
+
+Not very exciting, is it? But we can add some more interesting rules. What if we say, if the cell to the left of the cell in the previous row (their left neighbor) is filled in, fill it in?
+
+LINE
+
+Now we have an angled line. A little more interesting.
+
+Let's start adding some complexity. In the below grid, the rule is this: we fill in the cell if it was filled in on the previous row, or if either neighbor on the previous row was filled:
+
 <WolframPattern defaultRule={254} />
 
-One neighbor is filled, but not both:
+Thus we get a pyramid shape.
+
+Now: what if we fill in the cell if ONE neighbor is filled, but not both?
+
 <WolframPattern defaultRule={90} />
 
-Either left neighbor is filled, or either right neighbor or the cell itself:
+This is a fractal shape, an endlessly repeating pattern. It's neat to look at, but predictable. It will repeat the same pattern on and on if we had 1000 cells, or 10,000 cells.
+
+The next rule is much more interesting. This is where Wolfram started getting excited. Here, the rule is a little more complicated:
+
+> IF either the left neighbor is filled, OR one of the right neighbor or the previous cell.
+
+This is what's known as an "exclusive or". If the left neighbor is filled, but NOT the previous cell or its right neighbor, then we fill in the cell. If the left neighbor is filled AND either of the previous cell or its right neighbor, then we do not.
+
+Don't worry too much about explaining the rule, but watch the pattern:
+
 <WolframPattern defaultRule={30} />
 
-Try to render rule 110, which says
+The left side of this pattern looks pretty predictable. But the rest is not. It follows no predictable pattern at all. In fact, if you execute the pattern for 500 rows...
+
+500
+
+Or even 1500...
+
+1500
+
+... you can see it forms a lot of noise on the right side. It's entirely unpredictable, or random.
+
+We managed to get a random output with a relatively simple rule. That's how easy it is to generate complexity.
+
+You can use the below grid to generate your own pattern. Below, there's a few to try out:
+
 <WolframPattern />
 
+Try these out:
+
+> left neighbor is filled OR right neighbor is filled OR cell is filled
+
+That's our first pattern, the pyramid.
+
+You can make the fractal shape with:
+
+> (left neighbor is filled OR right neighbor is filled) AND left neighbor DOES NOT EQUAL right neighbor
+
+If you want to make the random pattern, here it is:
+
+> (left neighbor is filled AND NOT (cell is filled OR right neighbor is filled)) OR NOT left neighor is filled AND (cell is filled OR right neighbor is filled)
+
+See if you can make your own!
+
+You might find that these are kind of a pain to type out. We can actually represent these patterns in a simpler way.
+
+All the patterns draw from the previous cell and its neighbors. We can represent them like so:
+
+>left - center - right
+
+There are eight possible combinations of those three cells. We can represent them with 1s and 0s, where 1 means "filled" and 0 means "unfilled."
+
+So if all three are filled, we could represent that with 111. If only the right is filled, we can represent it with 001. If only the middle and left are filled, that's 110.
+
+Here are all the possible patterns:
+
+TABLE WITH NO CELLS 
+
+When we're defining a rule for our grid pattern, we can then represent with the above 8. For example, if the rule is "only fill the cell if all three cells above it are filled", we can show it in the following table:
+
+TABLE
+
+The "1" under "111" stands for "fill the cell if all three cells above it are filled."
+
+We previously defined our fractal shape like so:
+
+> (left neighbor is filled OR right neighbor is filled) AND left neighbor DOES NOT EQUAL right neighbor
+
+Which we can reword as:
+
+TABLE
+
+The widget below lets you build your own patterns from this binary notation. 
+
 <BinaryWolframPattern />
+
+Try making Rule 110, which is like so:
+
+TABLE
+
+Even with these limited inputs (filled/unfilled) and limited space (our tiny grid), we were able to generate complex, unpredictable behaviour. It's not unreasonable to think that our universe might work the same way: an entire reality generated from a few mathematical rules.
+
+If you're interesting in more articles like these, sign up for my newsletter, where I summarize the best of what I've written and read each week:
+
+<EmailSignUp />
