@@ -4,4 +4,12 @@ date: "2021-03-06T22:12:03.284Z"
 description: Stephen Wolfram's wild rules
 ---
 
+Cell is filled, or either neighbor is filled:
+<WolframPattern defaultRule={254} />
+
+One neighbor is filled, but not both:
+<WolframPattern defaultRule={90} />
+
+Either left neighbor is filled, or either right neighbor or the cell itself:
+<WolframPattern defaultRule={30} />
 <WolframPattern />

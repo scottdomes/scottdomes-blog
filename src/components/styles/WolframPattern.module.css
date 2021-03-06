@@ -1,6 +1,13 @@
+.container {
+  background-color: white;
+  padding: 10px;
+  border-radius: 22px;
+}
+
 .rowContainer {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .row {
@@ -8,12 +15,40 @@
 }
 
 .cell {
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   border: 1px solid #e6e6e6;
   display: block;
 }
 
 .blackCell {
   background-color: black;
+    border: 1px solid black;
+
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+.button {
+  margin: 5px;
+  background-color: #ea6561;
+  color: white;
+  border: none;
+  box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.1);
+  padding: 5px 10px;
+  border-radius: 10px;
+}
+
+.button:hover {
+  background-color: #a54844;
+  cursor: pointer;
+}
+
+.button:focus {
+  background-color: #a54844;
+  outline: 0 !important;
 }
