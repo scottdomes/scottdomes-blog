@@ -1,4 +1,4 @@
-const RULES = {
+export const RULES = {
   1: previousCell => previousCell,
   2: (_previousCell, leftNeighbor) => leftNeighbor,
   30: (previousCell, leftNeighbor, rightNeighbor) => {
@@ -18,4 +18,4 @@ const RULES = {
   },
 }
 
-export default RULES
+export const BINARY_RULES = {}

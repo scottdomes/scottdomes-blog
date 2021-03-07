@@ -78,37 +78,19 @@ _[Source](https://www.wolframscience.com/nks/p30--how-do-simple-programs-behave/
 
 We managed to get a random output with a relatively simple rule. That's how easy it is to generate complexity.
 
-You can use the below grid to generate your own pattern. Below, there's a few to try out:
-
-<WolframPattern />
-
-Try these out:
-
-> left neighbor is filled OR right neighbor is filled OR cell is filled
-
-That's our first pattern, the pyramid.
-
-You can make the fractal shape with:
-
-> (left neighbor is filled OR right neighbor is filled) AND left neighbor DOES NOT EQUAL right neighbor
-
-If you want to make the random pattern, here it is:
-
-> (left neighbor is filled AND NOT (cell is filled OR right neighbor is filled)) OR NOT left neighor is filled AND (cell is filled OR right neighbor is filled)
-
-See if you can make your own!
-
-You might find that these are kind of a pain to type out. We can actually represent these patterns in a simpler way.
+## Building your own patterns
 
 All the patterns draw from the previous cell and its neighbors. We can represent them like so:
 
-> left - center - right
+> left neighbor - previous cell - right neighbor
 
-There are eight possible combinations of those three cells. We can represent them with 1s and 0s, where 1 means "filled" and 0 means "unfilled."
+Let's make it simpler to show which are filled/unfilled, by using `1` to represent filled, and `0` to represent unfilled.
 
-So if all three are filled, we could represent that with 111. If only the right is filled, we can represent it with 001. If only the middle and left are filled, that's 110.
+So if all three are filled, it would be `111`. If all three were unfilled, it would be `000`.
 
-Here are all the possible combinations:
+Just the left neighbor is filled? `100`. Just the middle? `010`.
+
+There are eight possible combinations of those three cells. Here they are:
 
 <table>
   <thead>
@@ -141,24 +123,20 @@ When we're defining a rule for our grid pattern, we can represent it using this 
     </tr>
   </thead>
   <tbody>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
+    <td>1</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
   </tbody>
 </table>
 
 The "1" under "111" stands for "fill the cell if all three cells above it are filled."
 
-We previously defined our fractal shape like so:
-
-> (left neighbor is filled OR right neighbor is filled) AND left neighbor DOES NOT EQUAL right neighbor
-
-Which we can reword as:
+Our fractal shape appeared when our rule was "if one neighbor is filled, but not both." We can show this in binary like so:
 
 <table>
   <thead>
@@ -174,14 +152,14 @@ Which we can reword as:
     </tr>
   </thead>
   <tbody>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>1</td>
+    <td>0</td>
+    <td>0</td>
+    <td>1</td>
+    <td>0</td>
   </tbody>
 </table>
 
@@ -205,16 +183,30 @@ If you want to make a rule we haven't seen before, try the following:
     </tr>
   </thead>
   <tbody>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
+    <td>0</td>
+    <td>1</td>
+    <td>1</td>
+    <td>0</td>
+    <td>1</td>
+    <td>1</td>
+    <td>1</td>
+    <td>0</td>
   </tbody>
 </table>
+
+The bottom row spells out '01101110'. This is a handy way of writing out our rules.
+
+Try plugging in the following patterns:
+
+Single line: `0 0 0 0 0 1 0 0`
+
+Pyramid: `1 1 1 1 1 1 1 0`
+
+Fractal: `0 0 0 1 0 0 1 0`
+
+Random: `0 0 0 1 1 1 1 0`
+
+## A universe from a few simple rules
 
 In all these examples, we have limited input: a cell is or unfilled. We also have limited space: a tiny grid.
 
