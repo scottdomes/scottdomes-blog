@@ -93,17 +93,20 @@ const WolframPattern = ({ defaultRule, hideButtons }) => {
   }
 
   const addToRule = character => {
+    setError("")
     const newRule = [...customRule, character]
     setCustomRule(newRule)
   }
 
   const deleteFromRule = () => {
+    setError("")
     const newRule = [...customRule]
     newRule.pop()
     setCustomRule(newRule)
   }
 
   const clearCustomRule = () => {
+    setError("")
     setCustomRule([])
   }
 
@@ -127,6 +130,7 @@ const WolframPattern = ({ defaultRule, hideButtons }) => {
           )
         })}
       </div>
+      {error && <p className={styles.error}>{error}</p>}
       {!hideButtons && (
         <div className={styles.buttonContainer}>
           <button className={styles.button} onClick={updateRows}>
@@ -139,7 +143,7 @@ const WolframPattern = ({ defaultRule, hideButtons }) => {
       )}
       {!defaultRule && !hideButtons && (
         <div>
-          <p>{customRule.join(" ")}</p>
+          <p className={styles.rule}>Rule: {customRule.join(" ")}</p>
           <div>
             <button className={styles.button} onClick={() => addToRule("(")}>
               (
@@ -166,16 +170,16 @@ const WolframPattern = ({ defaultRule, hideButtons }) => {
               className={styles.button}
               onClick={() => addToRule("leftNeighbor")}
             >
-              Left neighbor
+              left neighbor
             </button>
             <button
               className={styles.button}
               onClick={() => addToRule("rightNeighbor")}
             >
-              Right neighbor
+              right neighbor
             </button>
             <button className={styles.button} onClick={() => addToRule("cell")}>
-              Cell
+              previous cell
             </button>
             <button
               className={styles.button}

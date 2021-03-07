@@ -6,8 +6,9 @@ import { MDXProvider } from "@mdx-js/react"
 import EmailSignup from "./emailSignup"
 import ReadingListSignUp from "../components/readingListSignUp"
 import Quizlet from "../components/Quizlet"
-import WolframPattern from "../components/WolframPattern"
-import BinaryWolframPattern from "../components/BinaryWolframPattern"
+import WolframPattern from "./WolframPattern/Base"
+import BinaryWolframPattern from "./WolframPattern/Binary"
+import CustomWolframPattern from "./WolframPattern/Custom"
 
 import Checkout from "./checkout"
 import HooksVideo from "./videos/HooksVideo"
@@ -22,6 +23,7 @@ const shortcodes = {
   Quizlet,
   WolframPattern,
   BinaryWolframPattern,
+  CustomWolframPattern,
 }
 
 class Layout extends React.Component {
