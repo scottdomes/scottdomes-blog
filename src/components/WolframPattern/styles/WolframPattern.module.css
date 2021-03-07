@@ -12,6 +12,11 @@
   align-items: center;
 }
 
+.table td {
+  padding: 1px;
+  text-align: center;
+}
+
 .row {
   display: flex;
 }

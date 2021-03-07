@@ -23,3 +23,8 @@ body :not(pre) > code[class*="language-"] {
   background: #656565;
   color: white;
 }
+
+body td,
+body th {
+  padding: 1px;
+}

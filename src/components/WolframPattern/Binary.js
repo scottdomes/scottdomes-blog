@@ -49,7 +49,7 @@ const Binary = () => {
         }
       />
       <div>
-        <table>
+        <table className={styles.table}>
           <thead>
             <tr>
               <td>111</td>
