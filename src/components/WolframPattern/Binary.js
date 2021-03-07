@@ -1,6 +1,8 @@
 import React, { useState } from "react"
 import styles from "./styles/WolframPattern.module.css"
 import Pattern from "./Pattern"
+import Grid, { Column, Cell } from "../Grid"
+import { BINARY_RULES } from "./constants"
 
 const updateRow = (row, previousRow, binaryRules) => {
   return row.map((cell, i) => {
@@ -15,13 +17,29 @@ const updateRow = (row, previousRow, binaryRules) => {
 const YesNoButton = ({ rule, onClick, binaryRules }) => {
   return (
     <button
-      className={`${styles.greyButton} ${styles.button}`}
+      className={`${styles.greyButton} ${styles.button} ${styles.binaryButton}`}
       onClick={() => onClick(rule)}
     >
       {binaryRules[rule] ? 1 : 0}
     </button>
   )
 }
+
+const GridColumn = ({ rule, binaryRules, updateBinaryRules }) => {
+  return (
+    <Column>
+      <Cell>{rule}</Cell>
+      <Cell>
+        <YesNoButton
+          rule={rule}
+          binaryRules={binaryRules}
+          onClick={updateBinaryRules}
+        />
+      </Cell>
+    </Column>
+  )
+}
+
 
 const Binary = () => {
   const [binaryRules, setBinaryRules] = useState({
@@ -49,80 +67,18 @@ const Binary = () => {
         }
       />
       <div>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <td>111</td>
-              <td>110</td>
-              <td>101</td>
-              <td>100</td>
-              <td>011</td>
-              <td>010</td>
-              <td>001</td>
-              <td>000</td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <YesNoButton
-                  rule="111"
-                  binaryRules={binaryRules}
-                  onClick={updateBinaryRules}
-                />
-              </td>
-              <td>
-                <YesNoButton
-                  rule="110"
-                  binaryRules={binaryRules}
-                  onClick={updateBinaryRules}
-                />
-              </td>
-              <td>
-                <YesNoButton
-                  rule="101"
-                  binaryRules={binaryRules}
-                  onClick={updateBinaryRules}
-                />
-              </td>
-              <td>
-                <YesNoButton
-                  rule="100"
-                  binaryRules={binaryRules}
-                  onClick={updateBinaryRules}
-                />
-              </td>
-              <td>
-                <YesNoButton
-                  rule="011"
-                  binaryRules={binaryRules}
-                  onClick={updateBinaryRules}
-                />
-              </td>
-              <td>
-                <YesNoButton
-                  rule="010"
-                  binaryRules={binaryRules}
-                  onClick={updateBinaryRules}
-                />
-              </td>
-              <td>
-                <YesNoButton
-                  rule="001"
-                  binaryRules={binaryRules}
-                  onClick={updateBinaryRules}
-                />
-              </td>
-              <td>
-                <YesNoButton
-                  rule="000"
-                  binaryRules={binaryRules}
-                  onClick={updateBinaryRules}
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <Grid>
+          {BINARY_RULES.map(rule => {
+            return (
+              <GridColumn
+                rule={rule}
+                key={rule}
+                updateBinaryRules={updateBinaryRules}
+                binaryRules={binaryRules}
+              />
+            )
+          })}
+        </Grid>
       </div>
     </div>
   )

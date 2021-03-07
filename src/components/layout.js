@@ -9,10 +9,10 @@ import Quizlet from "../components/Quizlet"
 import WolframPattern from "./WolframPattern/Base"
 import BinaryWolframPattern from "./WolframPattern/Binary"
 import CustomWolframPattern from "./WolframPattern/Custom"
+import RuleDisplay from "./WolframPattern/RuleDisplay"
 
 import Checkout from "./checkout"
 import HooksVideo from "./videos/HooksVideo"
-
 import "./styles/layout.css"
 
 const shortcodes = {
@@ -24,6 +24,7 @@ const shortcodes = {
   WolframPattern,
   BinaryWolframPattern,
   CustomWolframPattern,
+  RuleDisplay   
 }
 
 class Layout extends React.Component {

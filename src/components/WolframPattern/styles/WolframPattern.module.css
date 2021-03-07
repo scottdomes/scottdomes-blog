@@ -26,8 +26,8 @@
 }
 
 .cell {
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   border: 1px solid #e6e6e6;
   display: block;
 }
@@ -84,4 +84,29 @@
 .greenButton:hover,
 .greenButton:focus {
   background-color: rgb(32 138 76);
+}
+
+@media only screen and (max-width: 768px) {
+  .cell {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+@media only screen and (max-width: 470px) {
+  .cell {
+    width: 3px;
+    height: 3px;
+  }
+}
+
+@media only screen and (max-width: 330px) {
+  .cell {
+    width: 2px;
+    height: 2px;
+  }
+
+  .binaryButton {
+    padding: 5px 5px;
+  }
 }

@@ -1,0 +1,22 @@
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 12.5%;
+}
+
+.cell {
+  text-align: center;
+  padding: 0 10px;
+}
+
+@media only screen and (max-width: 650px) {
+  .column {
+    flex: 1 0 25%;
+  }
+}

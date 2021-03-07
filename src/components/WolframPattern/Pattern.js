@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import styles from "./styles/WolframPattern.module.css"
 import { getFirstRow, getInitialRows } from "./util"
+import WolframCanvas from "./WolframCanvas"
 
 const Pattern = ({ updateRow, hideButtons }) => {
   const initialRows = getInitialRows()
@@ -48,7 +49,7 @@ const Pattern = ({ updateRow, hideButtons }) => {
       <div className={styles.rowContainer}>
         {rows.map((row, rowIndex) => {
           return (
-            <div className={styles.row}>
+            <div className={styles.row} key={rowIndex}>
               {row.map((cell, cellIndex) => {
                 return (
                   <span

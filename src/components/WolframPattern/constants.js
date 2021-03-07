@@ -18,4 +18,13 @@ export const RULES = {
   },
 }
 
-export const BINARY_RULES = {}
+export const BINARY_RULES = [
+  "111",
+  "110",
+  "101",
+  "100",
+  "011",
+  "010",
+  "001",
+  "000",
+]

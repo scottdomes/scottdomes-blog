@@ -15,11 +15,11 @@ We have the theory of general relativity, which works very well for big things. 
 
 But we don't have a way to combine them.
 
-The Theory of Everything would be a single set of equations that explain all interactions between matter, energy, space, and time. 
+The Theory of Everything would be a single set of equations that explain all interactions between matter, energy, space, and time.
 
 It would explain the origins of the universe, the orbit of the earth around the sun, and all the weird quantum behaviour we keep uncovering.
 
-When you stop to think about it, this does seem a little crazy. Can a few equations really explain everything? 
+When you stop to think about it, this does seem a little crazy. Can a few equations really explain everything?
 
 The universe is mind-blogglingly massive and complex. Can we possibly reduce it all to a bit of math?
 
@@ -39,7 +39,7 @@ Here's an example rule: if the same cell in the previous row is filled in, we fi
 
 <WolframPattern defaultRule={1} />
 
-Not very exciting, is it? But we can use a more interesting rule. 
+Not very exciting, is it? But we can use a more interesting rule.
 
 What if we say, if the cell to the left of the cell in the previous row (their left neighbor) is filled in, fill it in on the next row?
 
@@ -63,7 +63,7 @@ This is a fractal shape, an endlessly repeating pattern. It's neat to look at. I
 
 ## A random pattern
 
-The next pattern is much more interesting. This is where Wolfram started getting excited. 
+The next pattern is much more interesting. This is where Wolfram started getting excited.
 
 Here, the rule is a little more complicated:
 
@@ -71,7 +71,7 @@ Here, the rule is a little more complicated:
 
 This is what's known as an "exclusive or". If the left neighbor is filled, but NOT the previous cell or its right neighbor, then we fill in the cell. If the left neighbor is filled AND either of the previous cell or its right neighbor, then we do not.
 
-In other words, fill the cell *if one of these is true, but not both*: `left neighbor is filled` OR `right neighbor is filled or previous cell is filled`.
+In other words, fill the cell _if one of these is true, but not both_: `left neighbor is filled` OR `right neighbor is filled or previous cell is filled`.
 
 Watch the pattern:
 
@@ -107,76 +107,18 @@ Just the left neighbor is filled? `100`. Just the middle? `010`.
 
 There are eight possible combinations of those three cells. Here they are:
 
-<table>
-  <thead>
-    <tr>
-      <td>111</td>
-      <td>110</td>
-      <td>101</td>
-      <td>100</td>
-      <td>011</td>
-      <td>010</td>
-      <td>001</td>
-      <td>000</td>
-    </tr>
-  </thead>
-</table>
+<RuleDisplay />
 
 When we're defining a rule for our grid pattern, we can represent it using this table. For example, if the rule is "only fill the cell if all three cells above it are filled", we can show it like so:
 
-<table>
-  <thead>
-    <tr>
-      <td>111</td>
-      <td>110</td>
-      <td>101</td>
-      <td>100</td>
-      <td>011</td>
-      <td>010</td>
-      <td>001</td>
-      <td>000</td>
-    </tr>
-  </thead>
-  <tbody>
-    <td>1</td>
-    <td>0</td>
-    <td>0</td>
-    <td>0</td>
-    <td>0</td>
-    <td>0</td>
-    <td>0</td>
-    <td>0</td>
-  </tbody>
-</table>
+<RuleDisplay rule="10000000" />
+
 
 This table thus says "fill the cell if all three cells above it are filled."
 
 Our fractal shape appeared when our rule was "if one neighbor is filled, but not both." We can show this in binary like so:
 
-<table>
-  <thead>
-    <tr>
-      <td>111</td>
-      <td>110</td>
-      <td>101</td>
-      <td>100</td>
-      <td>011</td>
-      <td>010</td>
-      <td>001</td>
-      <td>000</td>
-    </tr>
-  </thead>
-  <tbody>
-    <td>0</td>
-    <td>0</td>
-    <td>0</td>
-    <td>1</td>
-    <td>0</td>
-    <td>0</td>
-    <td>1</td>
-    <td>0</td>
-  </tbody>
-</table>
+<RuleDisplay rule="00010010" />
 
 This widget lets you build your own patterns from this binary notation:
 
@@ -184,30 +126,7 @@ This widget lets you build your own patterns from this binary notation:
 
 If you want to make a rule we haven't seen before, try the following:
 
-<table>
-  <thead>
-    <tr>
-      <td>111</td>
-      <td>110</td>
-      <td>101</td>
-      <td>100</td>
-      <td>011</td>
-      <td>010</td>
-      <td>001</td>
-      <td>000</td>
-    </tr>
-  </thead>
-  <tbody>
-    <td>0</td>
-    <td>1</td>
-    <td>1</td>
-    <td>0</td>
-    <td>1</td>
-    <td>1</td>
-    <td>1</td>
-    <td>0</td>
-  </tbody>
-</table>
+<RuleDisplay rule="01101110" />
 
 The bottom row spelled out is '01101110'. This is a handy way of writing out our rules.
 
