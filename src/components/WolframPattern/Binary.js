@@ -1,42 +1,6 @@
 import React, { useState } from "react"
 import styles from "./styles/WolframPattern.module.css"
-
-const RULES = {
-  30: (previousCell, leftNeighbor, rightNeighbor) => {
-    return (
-      (leftNeighbor && !(previousCell || rightNeighbor)) ||
-      (!leftNeighbor && (previousCell || rightNeighbor))
-    )
-  },
-  90: (cell, leftNeighbor, rightNeighbor) => {
-    return (
-      (leftNeighbor === 1 || rightNeighbor === 1) &&
-      leftNeighbor !== rightNeighbor
-    )
-  },
-  254: (cell, leftNeighbor, rightNeighbor) => {
-    return leftNeighbor === 1 || rightNeighbor === 1 || cell === 1
-  },
-}
-
-const getEmptyRow = () => {
-  return Array(101)
-    .fill()
-    .map(() => 0)
-}
-
-const firstRow = Array(50)
-  .fill()
-  .map(() => 0)
-  .concat([1])
-  .concat(
-    Array(50)
-      .fill()
-      .map(() => 0)
-  )
-const initialRows = Array(50)
-  .fill()
-  .map(() => getEmptyRow())
+import Pattern from "./Pattern"
 
 const updateRow = (row, previousRow, binaryRules) => {
   return row.map((cell, i) => {
@@ -50,16 +14,16 @@ const updateRow = (row, previousRow, binaryRules) => {
 
 const YesNoButton = ({ rule, onClick, binaryRules }) => {
   return (
-    <button className={styles.button} onClick={() => onClick(rule)}>
+    <button
+      className={`${styles.greyButton} ${styles.button}`}
+      onClick={() => onClick(rule)}
+    >
       {binaryRules[rule] ? 1 : 0}
     </button>
   )
 }
 
-const WolframPattern = ({ defaultRule, isBinary }) => {
-  initialRows[0] = firstRow
-  const [rows, setRows] = useState(initialRows)
-  const [error, setError] = useState("")
+const Binary = () => {
   const [binaryRules, setBinaryRules] = useState({
     "111": false,
     "110": false,
@@ -71,24 +35,6 @@ const WolframPattern = ({ defaultRule, isBinary }) => {
     "000": false,
   })
 
-  const getUpdatedRows = () => {
-    const newRows = [...rows]
-    for (let i = 1; i < rows.length; i++) {
-      newRows[i] = updateRow(newRows[i], newRows[i - 1], binaryRules)
-    }
-    return newRows
-  }
-
-  const updateRows = () => {
-    const rowsToUpdate = getUpdatedRows()
-
-    setRows(rowsToUpdate)
-  }
-
-  const resetRows = () => {
-    setRows(initialRows)
-  }
-
   const updateBinaryRules = rule => {
     const previousValue = binaryRules[rule]
     const newValue = previousValue ? 0 : 1
@@ -97,32 +43,11 @@ const WolframPattern = ({ defaultRule, isBinary }) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.rowContainer}>
-        {rows.map((row, rowIndex) => {
-          return (
-            <div className={styles.row}>
-              {row.map((cell, cellIndex) => {
-                return (
-                  <span
-                    key={`${rowIndex}${cellIndex}`}
-                    className={`${styles.cell} ${
-                      cell === 0 ? styles.whiteCell : styles.blackCell
-                    }`}
-                  />
-                )
-              })}
-            </div>
-          )
-        })}
-      </div>
-      <div className={styles.buttonContainer}>
-        <button className={styles.button} onClick={updateRows}>
-          Run
-        </button>
-        <button className={styles.button} onClick={resetRows}>
-          Reset
-        </button>
-      </div>
+      <Pattern
+        updateRow={(row, previousRow) =>
+          updateRow(row, previousRow, binaryRules)
+        }
+      />
       <div>
         <table>
           <thead>
@@ -203,4 +128,4 @@ const WolframPattern = ({ defaultRule, isBinary }) => {
   )
 }
 
-export default WolframPattern
+export default Binary

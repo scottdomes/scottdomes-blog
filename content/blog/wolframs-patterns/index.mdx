@@ -6,7 +6,7 @@ description: Stephen Wolfram's wild rules
 
 ## The Theory of Everything
 
-The ultimate goal of physics is finding the Theory of Everything.
+The ultimate goal of physics is finding the so-called Theory of Everything.
 
 This theory would be a single framework that explains all physical aspects of the universe. Right now, we can explain many aspects pretty well. But there's one major divide.
 
@@ -18,11 +18,11 @@ The Theory of Everything would be a single set of equations that explain all int
 
 When you stop to think about it, this does seem a little crazy. Can a few equations really explain everything? The universe is mind-blogglingly massive and complex. Can we possibly reduce it all to a bit of math?
 
-Stephen Wolfram says we can, and here's how.
+Computer scientist Stephen Wolfram says we can, and here's how.
 
 ## Wolfram's emergent complexity
 
-Wolfram is a computer scientist and physicist who has had a very busy and storied career, but today we'll focus on just one contribution. Wolfram proved that you can generate complex behaviour from a few very simple rules.
+Wolfram has had a very busy and storied career in both computer science and physics, but today we'll focus on just one contribution. Wolfram proved that you can generate complex behaviour from a few very simple rules.
 
 Let's take a simple grid, like so. The grid is divided into cells, and in the middle of the very top row, one cell is filled in.
 
@@ -46,11 +46,15 @@ Let's start adding some complexity. In the below grid, the rule is this: we fill
 
 Thus we get a pyramid shape.
 
+## A fractal pattern
+
 Now: what if we fill in the cell if ONE neighbor is filled, but not both?
 
 <WolframPattern defaultRule={90} />
 
-This is a fractal shape, an endlessly repeating pattern. It's neat to look at, but predictable. It will repeat the same pattern on and on if we had 1000 cells, or 10,000 cells.
+This is a fractal shape, an endlessly repeating pattern. It's neat to look at. It's also very predictable. It will repeat the same pattern on and on if we had 1000 cells, or 10,000 cells.
+
+## A random pattern
 
 The next rule is much more interesting. This is where Wolfram started getting excited. Here, the rule is a little more complicated:
 
@@ -76,7 +80,7 @@ _[Source](https://www.wolframscience.com/nks/p30--how-do-simple-programs-behave/
 
 ... you can see the right side looks very chaotic. It is, in fact, entirely unpredictable, or what we'd call random.
 
-We managed to get a random output with a relatively simple rule. That's how easy it is to generate complexity.
+We managed to get a random output with a relatively simple rule. That's how easy it is to generate true complexity.
 
 ## Building your own patterns
 
@@ -194,7 +198,7 @@ If you want to make a rule we haven't seen before, try the following:
   </tbody>
 </table>
 
-The bottom row spells out '01101110'. This is a handy way of writing out our rules.
+The bottom row spelled out is '01101110'. This is a handy way of writing out our rules.
 
 Try plugging in the following patterns:
 

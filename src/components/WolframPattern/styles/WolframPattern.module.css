@@ -53,20 +53,30 @@
   border-radius: 10px;
 }
 
-.greenButton {
-  background-color: rgb(33 173 92);
-}
-
 .button:hover {
   background-color: #a54844;
   cursor: pointer;
 }
 
-.greenButton:hover {
-  background-color: rgb(32 138 76);
-}
-
 .button:focus {
   background-color: #a54844;
   outline: 0 !important;
+}
+
+.greenButton {
+  background-color: rgb(33 173 92);
+}
+
+.greyButton {
+  background-color: #909090;
+}
+
+.greyButton:hover,
+.greyButton:focus {
+  background-color: #656565;
+}
+
+.greenButton:hover,
+.greenButton:focus {
+  background-color: rgb(32 138 76);
 }

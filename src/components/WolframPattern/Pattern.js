@@ -66,10 +66,16 @@ const Pattern = ({ updateRow, hideButtons }) => {
       {error && <p className={styles.error}>{error}</p>}
       {!hideButtons && (
         <div className={styles.buttonContainer}>
-          <button className={styles.button} onClick={updateRows}>
+          <button
+            className={`${styles.greenButton} ${styles.button}`}
+            onClick={updateRows}
+          >
             Run
           </button>
-          <button className={styles.button} onClick={resetRows}>
+          <button
+            className={`${styles.greyButton} ${styles.button}`}
+            onClick={resetRows}
+          >
             Reset
           </button>
         </div>

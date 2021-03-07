@@ -18,3 +18,8 @@ body.dark h5,
 body.dark a {
   color: #8c52ff;
 }
+
+body :not(pre) > code[class*="language-"] {
+  background: #656565;
+  color: white;
+}
