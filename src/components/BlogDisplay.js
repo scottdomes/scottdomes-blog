@@ -1,8 +1,8 @@
-import React from 'react';
-import Bio from './bio';
-import SEO from './seo';
-import { rhythm, scale } from '../utils/typography';
-import { MDXRenderer } from 'gatsby-plugin-mdx';
+import React from "react"
+import Bio from "./bio"
+import SEO from "./seo"
+import { rhythm, scale } from "../utils/typography"
+import { MDXRenderer } from "gatsby-plugin-mdx"
 
 const BlogDisplay = ({ post }) => {
   return (
@@ -16,13 +16,15 @@ const BlogDisplay = ({ post }) => {
           marginBottom: rhythm(1),
         }}
       >
-        <h1>{post.frontmatter.title}</h1>
+        <h1 sty>{post.frontmatter.title}</h1>
+        <h3 style={{ marginBottom: 1, marginTop: rhythm(-0.5) }}>
+          {post.frontmatter.description}
+        </h3>
         <p
           style={{
             ...scale(-1 / 5),
             display: `block`,
             marginBottom: 0,
-            marginTop: rhythm(-1),
           }}
         >
           {post.frontmatter.date}
@@ -36,7 +38,7 @@ const BlogDisplay = ({ post }) => {
       />
       <Bio />
     </div>
-  );
-};
+  )
+}
 
-export default BlogDisplay;
+export default BlogDisplay
