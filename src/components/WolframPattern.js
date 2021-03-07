@@ -2,6 +2,8 @@ import React, { useState } from "react"
 import styles from "./styles/WolframPattern.module.css"
 
 const RULES = {
+  1: previousCell => previousCell,
+  2: (_previousCell, leftNeighbor) => leftNeighbor,
   30: (previousCell, leftNeighbor, rightNeighbor) => {
     return (
       (leftNeighbor && !(previousCell || rightNeighbor)) ||
@@ -47,7 +49,7 @@ const updateRow = (row, previousRow, rule) => {
   })
 }
 
-const WolframPattern = ({ defaultRule }) => {
+const WolframPattern = ({ defaultRule, hideButtons }) => {
   initialRows[0] = firstRow
   const [rows, setRows] = useState(initialRows)
   const [error, setError] = useState("")
@@ -105,8 +107,6 @@ const WolframPattern = ({ defaultRule }) => {
     setCustomRule([])
   }
 
-  console.log(customRule)
-
   return (
     <div className={styles.container}>
       <div className={styles.rowContainer}>
@@ -127,15 +127,17 @@ const WolframPattern = ({ defaultRule }) => {
           )
         })}
       </div>
-      <div className={styles.buttonContainer}>
-        <button className={styles.button} onClick={updateRows}>
-          Run
-        </button>
-        <button className={styles.button} onClick={resetRows}>
-          Reset
-        </button>
-      </div>
-      {!defaultRule && (
+      {!hideButtons && (
+        <div className={styles.buttonContainer}>
+          <button className={styles.button} onClick={updateRows}>
+            Run
+          </button>
+          <button className={styles.button} onClick={resetRows}>
+            Reset
+          </button>
+        </div>
+      )}
+      {!defaultRule && !hideButtons && (
         <div>
           <p>{customRule.join(" ")}</p>
           <div>

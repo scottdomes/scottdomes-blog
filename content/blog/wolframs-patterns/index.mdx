@@ -4,29 +4,39 @@ date: "2021-03-06T22:12:03.284Z"
 description: Stephen Wolfram's wild rules
 ---
 
-The holy grail of physics is the so-called Theory of Everything, a single framework that explains all physical aspects of the universe. Right now, we have the theory of general relativity, which works very well for big things, and we have the theory of quantum mechanics, which works well for very small things, but we have no single theory to explain them both.
+## The Theory of Everything
 
-Ideally, the Theory of Everything would rest on a single set of equations that explain... well, everything. Everything from the beginning of the universe, when all matter was squished together before the Big Bang, all the way to our present day, expanding universe.
+The ultimate goal of physics is finding the Theory of Everything.
 
-When you stop to think about it, this does seem a little crazy. Can a few equations really explain EVERYTHING? The universe is mind-blogglingly massive and complex. Can we possibly reduce it all to a bit of math?
+This theory would be a single framework that explains all physical aspects of the universe. Right now, we can explain many aspects pretty well. But there's one major divide.
 
-Stephen Wolfram says we can.
+We have the theory of general relativity, which works very well for big things. We also have the theory of quantum mechanics, which works well for very small things.
+
+But we don't have a way to combine them.
+
+The Theory of Everything would be a single set of equations that explain all interactions between matter, energy, space, and time. It would explain the origins of the universe, the orbit of the earth around the sun, and all the weird quantum behaviour we kept uncovering.
+
+When you stop to think about it, this does seem a little crazy. Can a few equations really explain everything? The universe is mind-blogglingly massive and complex. Can we possibly reduce it all to a bit of math?
+
+Stephen Wolfram says we can, and here's how.
+
+## Wolfram's emergent complexity
 
 Wolfram is a computer scientist and physicist who has had a very busy and storied career, but today we'll focus on just one contribution. Wolfram proved that you can generate complex behaviour from a few very simple rules.
 
 Let's take a simple grid, like so. The grid is divided into cells, and in the middle of the very top row, one cell is filled in.
 
-GRID 
+<WolframPattern hideButtons />
 
 From there, you can proceed row by row down the grid (second row, third row, fourth row), filling in cells. Which cells you fill in depends on what rule you define.
 
 Here's an example rule. If the same cell in the previous row is filled in, we fill it in again. Click Run below to see what pattern this generates.
 
-LINE
+<WolframPattern defaultRule={1} />
 
 Not very exciting, is it? But we can add some more interesting rules. What if we say, if the cell to the left of the cell in the previous row (their left neighbor) is filled in, fill it in?
 
-LINE
+<WolframPattern defaultRule={2} />
 
 Now we have an angled line. A little more interesting.
 
@@ -48,11 +58,13 @@ The next rule is much more interesting. This is where Wolfram started getting ex
 
 This is what's known as an "exclusive or". If the left neighbor is filled, but NOT the previous cell or its right neighbor, then we fill in the cell. If the left neighbor is filled AND either of the previous cell or its right neighbor, then we do not.
 
-Don't worry too much about explaining the rule, but watch the pattern:
+In other words, fill the cell if one of these is true, but not both: `left neighbor is filled` OR `right neighbor is filled or previous cell is filled`.
+
+Watch the pattern:
 
 <WolframPattern defaultRule={30} />
 
-The left side of this pattern looks pretty predictable. But the rest is not. It follows no predictable pattern at all. In fact, if you execute the pattern for 500 rows...
+The left side of this result looks pretty predictable. But the rest is not. It follows no predictable pattern at all. In fact, if you execute the pattern for 500 rows...
 
 500
 
@@ -60,7 +72,7 @@ Or even 1500...
 
 1500
 
-... you can see it forms a lot of noise on the right side. It's entirely unpredictable, or random.
+... you can see the right side looks very chaotic. It's entirely unpredictable. It is essentially random.
 
 We managed to get a random output with a relatively simple rule. That's how easy it is to generate complexity.
 
@@ -88,19 +100,55 @@ You might find that these are kind of a pain to type out. We can actually repres
 
 All the patterns draw from the previous cell and its neighbors. We can represent them like so:
 
->left - center - right
+> left - center - right
 
 There are eight possible combinations of those three cells. We can represent them with 1s and 0s, where 1 means "filled" and 0 means "unfilled."
 
 So if all three are filled, we could represent that with 111. If only the right is filled, we can represent it with 001. If only the middle and left are filled, that's 110.
 
-Here are all the possible patterns:
+Here are all the possible combinations:
 
-TABLE WITH NO CELLS 
+<table>
+  <thead>
+    <tr>
+      <td>111</td>
+      <td>110</td>
+      <td>101</td>
+      <td>100</td>
+      <td>011</td>
+      <td>010</td>
+      <td>001</td>
+      <td>000</td>
+    </tr>
+  </thead>
+</table>
 
-When we're defining a rule for our grid pattern, we can then represent with the above 8. For example, if the rule is "only fill the cell if all three cells above it are filled", we can show it in the following table:
+When we're defining a rule for our grid pattern, we can represent it using this table. For example, if the rule is "only fill the cell if all three cells above it are filled", we can show it in the following table:
 
-TABLE
+<table>
+  <thead>
+    <tr>
+      <td>111</td>
+      <td>110</td>
+      <td>101</td>
+      <td>100</td>
+      <td>011</td>
+      <td>010</td>
+      <td>001</td>
+      <td>000</td>
+    </tr>
+  </thead>
+  <tbody>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+  </tbody>
+</table>
 
 The "1" under "111" stands for "fill the cell if all three cells above it are filled."
 
@@ -110,18 +158,68 @@ We previously defined our fractal shape like so:
 
 Which we can reword as:
 
-TABLE
+<table>
+  <thead>
+    <tr>
+      <td>111</td>
+      <td>110</td>
+      <td>101</td>
+      <td>100</td>
+      <td>011</td>
+      <td>010</td>
+      <td>001</td>
+      <td>000</td>
+    </tr>
+  </thead>
+  <tbody>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+  </tbody>
+</table>
 
-The widget below lets you build your own patterns from this binary notation. 
+This widget lets you build your own patterns from this binary notation:
 
 <BinaryWolframPattern />
 
-Try making Rule 110, which is like so:
+If you want to make a rule we haven't seen before, try the following:
 
-TABLE
+<table>
+  <thead>
+    <tr>
+      <td>111</td>
+      <td>110</td>
+      <td>101</td>
+      <td>100</td>
+      <td>011</td>
+      <td>010</td>
+      <td>001</td>
+      <td>000</td>
+    </tr>
+  </thead>
+  <tbody>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+  </tbody>
+</table>
 
-Even with these limited inputs (filled/unfilled) and limited space (our tiny grid), we were able to generate complex, unpredictable behaviour. It's not unreasonable to think that our universe might work the same way: an entire reality generated from a few mathematical rules.
+In all these examples, we have limited input: a cell is or unfilled. We also have limited space: a tiny grid.
+
+Despite these limitations, we were able to generate complex, unpredictable patterns.
+
+It's not unreasonable to think that our universe might work the same way: an entire complex reality, generated from a few mathematical rules.
 
 If you're interesting in more articles like these, sign up for my newsletter, where I summarize the best of what I've written and read each week:
 
-<EmailSignUp />
+<EmailSignup />
