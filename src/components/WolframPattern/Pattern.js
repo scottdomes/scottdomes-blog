@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import styles from "./styles/WolframPattern.module.css"
 import { getFirstRow, getInitialRows } from "./util"
 import WolframCanvas from "./WolframCanvas"
@@ -8,6 +8,24 @@ const Pattern = ({ updateRow, hideButtons }) => {
   initialRows[0] = getFirstRow()
   const [rows, setRows] = useState(initialRows)
   const [error, setError] = useState("")
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [rowUpdateIndex, setRowUpdateIndex] = useState(0)
+  const [updatedRows, setUpdatedRows] = useState(rows)
+
+  useEffect(() => {
+    if (isUpdating) {
+      if (rowUpdateIndex === rows.length) {
+        setIsUpdating(false)
+      } else {
+        const newRows = [...rows]
+        newRows[rowUpdateIndex] = updatedRows[rowUpdateIndex]
+        setTimeout(() => {
+          setRows(newRows)
+          setRowUpdateIndex(rowUpdateIndex + 1)
+        }, 1)
+      }
+    }
+  }, [isUpdating, rowUpdateIndex])
 
   const getUpdatedRows = () => {
     const newRows = [...rows]
@@ -36,11 +54,24 @@ const Pattern = ({ updateRow, hideButtons }) => {
     }
     const rowsToUpdate = getUpdatedRows()
 
-    setRows(rowsToUpdate)
+    setUpdatedRows(rowsToUpdate)
+    setRowUpdateIndex(0)
+    setIsUpdating(true)
+
+    // const newRows = [...rows]
+    // rowsToUpdate.forEach((row, i) => {
+    //   setTimeout(() => {
+    //     newRows[i] = row
+    //     return setRows(newRows)
+    //   }, 500)
+    // })
+
+    // setRows(rowsToUpdate)
   }
 
   const resetRows = () => {
     setError("")
+    setIsUpdating(false)
     setRows(initialRows)
   }
 
